@@ -18,7 +18,7 @@ $dllHash = (Get-FileHash -LiteralPath $dll -Algorithm SHA256).Hash
 $targets = [Collections.Generic.List[string]]::new()
 foreach ($relative in @(
     'build/votv-coop-2152', 'build/votv-coop-2153',
-    '_research', 'build/package-current/stage',
+    'build/package-current/stage',
     'build/package-current/rejected-dll-only.zip', 'garden_sync_test.obj',
     'agent/tests/__pycache__', 'build/requested-events-native/__pycache__',
     'build/votv-coop-2154/generated/l10n_packs.rc.tmp'
@@ -49,8 +49,12 @@ foreach ($item in Get-ChildItem -LiteralPath $PSScriptRoot -File) {
 # Preserve the active CMake tree and shared vcpkg installation in full.
 # Elsewhere keep logs, JSON qualifications, source snapshots and native crash dumps.
 $extensions = @('.exe', '.dll', '.obj', '.pdb', '.ilk', '.ipdb', '.iobj', '.exp', '.lib', '.tmp', '.bak', '.pyc')
+foreach ($file in Get-ChildItem -LiteralPath (Join-Path $checkout '_research') -Recurse -File -ErrorAction SilentlyContinue) {
+    if ($file.Extension -in $extensions) { $targets.Add($file.FullName) }
+}
 foreach ($directory in Get-ChildItem -LiteralPath (Join-Path $checkout 'build') -Directory) {
     if ($directory.Name -in @('votv-coop', 'votv-coop-2152', 'votv-coop-2153', 'votv-coop-2154', 'package-current')) { continue }
+    if (Test-Path -LiteralPath (Join-Path $directory.FullName 'CMakeCache.txt')) { continue }
     foreach ($file in Get-ChildItem -LiteralPath $directory.FullName -Recurse -File) {
         if ($file.Extension -in $extensions) { $targets.Add($file.FullName) }
     }

@@ -63,6 +63,10 @@ struct MainPlayerGrabState {
 
 bool ReadMainPlayerGrabState(void* mainPlayer, MainPlayerGrabState& out);
 
+// mainPlayer_C's input_run, the run key's flag (a packed bitfield bool), which prop_container_C's playerUsedOn reads
+// to tell a put from a look. False on a null or dead pawn or an unresolved field. Game thread.
+bool ReadInputRun(void* mainPlayer, bool& out);
+
 // The player's own updateHold: the hand item rebuilt from the save slot's first hold slot, the one
 // held before destroyed. A dev drill's equip, after ue_wrap/actors/inventory::WriteHeldItem.
 // False when the function does not resolve or the call fails. Game thread.
@@ -297,6 +301,14 @@ bool ReadMainPlayerCanRagdoll(void* mainPlayer, bool& allowed);
 // (@2784), so a hit without it produces a death the game never produces. Game thread.
 bool InvokeAddPlayerDamage(void* mainPlayer, float damage, bool blood = false);
 
+
+// Fire the player's `input_mouseXY` dispatcher with (x, y): the multicast the player's own tick broadcasts
+// every frame from the mouse axes (`GetInputAxisValue("mouseX")` and `("mouseY")`), which a grabbed
+// swinger binds `mouseAssign` to. Each bound entry whose function takes `mouseXY` runs through ProcessEvent
+// with that value, as the Broadcast runs it; the invocation list is read from the player's reflected member.
+// `delivered` is how many entries ran. False when the member does not resolve or the player is dead.
+// Game thread.
+bool BroadcastMainPlayerMouseXY(void* mainPlayer, float x, float y, int* delivered = nullptr);
 
 // ---- The puppet's faint display ----
 // A puppet never runs ragdollMode: its playerRagdoll_C's lifecycle assumes a possessed, ticking

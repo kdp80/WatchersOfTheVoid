@@ -50,8 +50,8 @@ This test package contains **DLL b2217 / network protocol 2217** and includes th
 changes since 0.9.2158, plus the current upstream integration.
 Automatic joins above four players also require the updated master service.
 
-The active version is **2163** across development continuations. This archive
-is an offline test build of the current development snapshot. Its package checks
+The last qualified archive is **2163**. Development now targets **2164**;
+its b2219 source integration is separate from this retained b2217 archive. Its package checks
 cover the manager layout, included models, version label and matching Release DLL.
 Current qualification and limits are recorded in RELEASE.md and agent/TESTLOG.md.
 Rendered gameplay, real-peer synchronization and full event coverage remain

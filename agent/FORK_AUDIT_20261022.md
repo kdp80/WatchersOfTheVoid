@@ -1,3 +1,57 @@
+# Fork and upstream refresh ? 1 November 2026
+
+Development target: **0.9.2164**. Fetched upstream **4fbf1acf0e0ec7d14350132cd3de01d6a86aa552**.
+Git reports 436 upstream graph commits outside HEAD: 306 covered by the previous
+`dc4cd7307` source integration and 130 new commits transferred in this refresh.
+The source integration preserves fork adaptations rather than importing upstream's
+protocol number or overwriting working changes. HEAD and the real index remain
+unchanged; upstream ancestry is not recorded until an explicitly requested commit.
+
+Enumerated 51 other default heads across the upstream network and the direct
+WatchersOfTheVoid forks; 50 fetched successfully. Marlore/temp-mail-generator
+still returns not found. This inventory covers publicly returned default branches,
+not every nondefault branch or unpublished work. Evidence:
+`build/forks-2164.json`, `build/fork-heads-2164.json`, and
+`build/sync-2164/{fork-comparison,upstream-commits}.json`.
+
+## Applied or retained
+
+| Provenance | Decision |
+| --- | --- |
+| Ghezra `97f1f6072` | Disable cast shadows on both puppet body mesh slots so the body does not cut its own flashlight cone. The adapted wrapper checks the parameter write and uses serial-aware dispatch resolution. Rendered acceptance remains open. |
+| Dafirka `d52f22cfc` | Cache name-watch lookup, revalidate the table slot, and reuse settled dead watches. The production fixture checks 100000 repeated registrations, equal text at another address and a stale cached slot. |
+| Dafirka `61874dfdf`, `979c95e8c`, `4a945e3a7` | Stop re-ensuring settled native destruction watches for deer, centipede and mannequin on every tick. |
+| Dafirka `15fa7c39a` | Keep serverbox delivery cursors and per-recipient state when Install is re-ensured for the same session serial. |
+| Dafirka `593b7900c`, reflection subset | Cache class default objects by requested class, object serial and both names. Keep the fork's two-pass console layout checks, which protect callback retirement; omit unrelated profiling-only additions. |
+| Upstream `e931d30da` through `4fbf1acf0` | Transfer rapid record updates, container host escrow/reservations/overlap arming, throw election/damage bounds, snapshot position waits and associated drills. Preserve native extraction publication and its fingerprint; retain fork identity, food, hold, checked write and lifetime safeguards at conflicts. |
+| Dafirka `321813735`, Ghezra balance/coin/can fixes | Existing per-recipient balance debt, owned native coin collection and mutation-ready canned-food publication already cover these fixes with additional lifetime and transaction guards. Keep those implementations; adapt upstream CI fixtures to them. |
+| Older reviewed forks | Retain existing generator, coasting, laptop/screen, disk string, class capacity and birth/lifetime adaptations. Rewritten historical pelmentor/Claude commits are not treated as independent new fork fixes. |
+
+## Exclusions and follow-up
+
+Ghezra's `70641f091` toolgun lane is a useful UG3 implementation reference,
+but its symmetric state relay needs the fork's host admission and hold/lifetime
+policy. Its `764bdb93b` signal settings need the existing operator lease; its
+first-holder election must not replace our current hold arbitration wholesale.
+The can route is already covered locally. Save announcements and class/beam
+inspection tools are separate features, not required repairs for this transfer.
+No upstream/fork CI weakening, public version changes or replacement wire IDs
+were imported. Existing gv1nd capacity and Dev-prizrakk/Shinobu2/Tarangok fixes
+remain superseded by current implementations where noted in the older review.
+
+The upstream removal of the takeObj fingerprint is excluded because the retained
+fork extraction publisher still watches that exact body. Old container CAS files
+and fixed-version package scripts have no active consumers and were removed after
+checking recoverable HEAD copies. Five superseded coordinate-tower/hit-intent source files were also removed
+after explicit owner approval; the previous automatic rejection and exact
+recoverable paths are recorded in the cleanup inventory.
+
+The source transfer builds with development protocol **2219**. Published IDs are
+retained, HitIntent keeps 242, container request/reply/commit use 264/265/266,
+and PropRelease/PropDropIntent retain the fork fields at 94/214 bytes. The old
+2163/b2217 archive and release.json remain the last qualified package.
+Verification and multiplayer limits are recorded in TESTLOG.md.
+
 # Refreshed fork review — 28 October 2026
 
 The inventory below is historical. A fresh default-head review now enumerates

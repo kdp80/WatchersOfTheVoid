@@ -4,8 +4,8 @@ Read `agent/README.md`, `agent/TODO.md` and `agent/WORK.md` before continuing fi
 Update the existing TODO/WORK documents as work lands; record verification in
 `agent/TESTLOG.md`. Keep implemented code separate from unperformed gameplay checks.
 For an owner's "продовжуй", handle 75 concrete fixes per continuation.
-The active development target is **0.9.2163**, explicitly requested by the owner
-on 28 October. The last qualified package is **0.9.2163 / b2217** (offline),
+The active development target is **0.9.2164**, explicitly requested by the owner
+on 1 November. The last qualified package is **0.9.2163 / b2217** (offline),
 with 124 passing current validation groups and a verified manager archive.
 A continuation does not start a new
 version, bump the public version/protocol, or prepare a new release automatically.

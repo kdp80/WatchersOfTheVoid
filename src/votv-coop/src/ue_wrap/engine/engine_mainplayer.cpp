@@ -14,6 +14,7 @@
 #include "ue_wrap/core/call.h"
 #include "ue_wrap/core/log.h"
 #include "ue_wrap/core/reflection.h"
+#include "ue_wrap/core/reflection_props.h"
 #include "ue_wrap/core/sdk_profile.h"
 #include "ue_wrap/core/reflected_offset.h"
 
@@ -225,6 +226,24 @@ bool CallPutObjectInventory2(void* mainPlayer, void* target, bool noNotify, bool
     if (!f.valid() || !f.Set<void*>(L"InputPin", target) || !f.Set<bool>(L"noNotify", noNotify) || !Call(mainPlayer, f))
         return false;
     taken = f.Get<bool>(L"return");
+    return true;
+}
+
+bool ReadInputRun(void* mainPlayer, bool& out) {
+    static void* sCls = nullptr;   // the class the bitfield was read from; asked again when it changes
+    static int32_t sOff = -1;
+    static uint8_t sMask = 0;
+    out = false;
+    if (!mainPlayer || !R::IsLive(mainPlayer)) return false;
+    void* const cls = R::ClassOf(mainPlayer);
+    if (cls != sCls) {
+        sCls = cls;
+        sOff = -1;
+        sMask = 0;
+        if (!R::FindBoolProperty(cls, L"input_run", sOff, sMask)) sOff = -1;
+    }
+    if (sOff < 0 || sMask == 0) return false;
+    out = (*(reinterpret_cast<const uint8_t*>(mainPlayer) + sOff) & sMask) != 0;
     return true;
 }
 
@@ -743,6 +762,50 @@ bool InvokeAddPlayerDamage(void* mainPlayer, float damage, bool blood) {
     // makes a synthetic hit unlike any hit the game produces.
     if (blood) f.Set<bool>(L"blood", true);
     return Call(mainPlayer, f);
+}
+
+bool BroadcastMainPlayerMouseXY(void* mainPlayer, float x, float y, int* delivered) {
+    if (delivered) *delivered = 0;
+    if (!mainPlayer || !R::IsLive(mainPlayer)) return false;
+    // A multicast delegate member is its invocation TArray {data, num, max} of FScriptDelegate: the bound
+    // object's slot index and serial, then the function's FName. The member is found by name and size once
+    // per player class.
+    struct Entry {
+        int32_t objectIndex;
+        int32_t objectSerial;
+        R::FName functionName;
+    };
+    struct List {
+        Entry*  data;
+        int32_t num;
+        int32_t max;
+    };
+    static void* sCls = nullptr;
+    static int32_t sOff = -1;
+    void* cls = R::ClassOf(mainPlayer);
+    if (!cls) return false;
+    if (cls != sCls) {
+        sCls = cls;
+        sOff = -1;
+        for (const R::StructFieldInfo& f : R::EnumerateStructFields(cls))
+            if (f.name == L"input_mouseXY" && f.size == static_cast<int32_t>(sizeof(List))) sOff = f.offset;
+    }
+    if (sOff < 0) return false;
+    const List* list = reinterpret_cast<const List*>(static_cast<uint8_t*>(mainPlayer) + sOff);
+    if (!list->data || list->num <= 0 || list->num > 64) return true;
+    const FVector2D xy{x, y};
+    int ran = 0;
+    for (int32_t i = 0; i < list->num; ++i) {
+        const Entry e = list->data[i];
+        void* obj = R::ObjectAt(e.objectIndex);
+        if (!obj || R::SlotSerial(e.objectIndex) != e.objectSerial || !R::IsLive(obj)) continue;
+        void* fn = R::FindDispatchFunctionCached(R::ClassOf(obj), R::ToString(e.functionName).c_str());
+        if (!fn || R::FindParamOffset(fn, L"mouseXY") < 0) continue;
+        ParamFrame f(fn);
+        if (f.valid() && f.Set<FVector2D>(L"mouseXY", xy) && Call(obj, f)) ++ran;
+    }
+    if (delivered) *delivered = ran;
+    return true;
 }
 
 

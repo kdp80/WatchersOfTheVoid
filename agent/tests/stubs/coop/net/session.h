@@ -2,27 +2,30 @@
 // Offline transport double; production protocol and receiver implementation are unchanged.
 #include "coop/net/protocol.h"
 #include "coop/net/eid_pose_lane.h"
+#include "coop/net/end_reason.h"
 #include <cstring>
+#include <cstdlib>
 #include <vector>
 #include <functional>
 #include <utility>
 namespace coop::net {
 struct Config;
-inline constexpr uint8_t kMaxPeers=4;
+inline constexpr uint8_t kMaxPeers=kPeerCapacity;
 enum class Role : uint8_t { Host, Client };
 class Session {
 public:
-    using BulkSinkFn = void (*)(int, const uint8_t*, int);
+    using BulkSinkFn = void (*)(const uint8_t*, int);
     BulkSinkFn bulkSink = nullptr;
     BulkSinkFn saveBeginSink = nullptr;
     void SetBulkSink(BulkSinkFn fn) { bulkSink = fn; }
     void SetSaveBeginSink(BulkSinkFn fn) { saveBeginSink = fn; }
+    bool Kick(int, EndReason, const char*) { std::abort(); }
     bool TrySendReliableToSlot(int slot, ReliableKind kind, const void* data, int size) {
         return SendReliableToSlot(slot, kind, data, size);
     }
     struct ReliableMessage;
-    std::vector<PropPoseSnapshot> incoming;
-    std::vector<PropPoseSnapshot> published;
+    std::vector<PropDriveRow> incoming;
+    std::vector<PropDriveRow> published;
     std::vector<PropDriveEndPayload> ends;
     bool sendOk = true;
     std::function<void()> beforeSend;
@@ -40,7 +43,7 @@ public:
     std::vector<KitchenIntentPayload> kitchenIntents;
     std::vector<GrillEditPayload> grillEdits;
     PoseTurn PropDrivePoseTurn(uint32_t) { return PoseTurn::Join; }
-    void PublishPropDrivePose(const PropPoseSnapshot& p) { published.push_back(p); }
+    void PublishPropDrivePose(const PropDriveRow& p) { published.push_back(p); }
     bool SendReliable(ReliableKind kind, const void* data, size_t size) {
         auto callback=std::move(beforeSend);beforeSend={};if(callback)callback();
         if (!sendOk) return false;
@@ -67,7 +70,7 @@ public:
         std::memcpy(&p, data, size); ends.push_back(p); return true;
     }
     bool SendReliableToSlot(int, ReliableKind kind,const void* data,size_t size) { return SendReliable(kind,data,size); }
-    bool TakeRemotePropDriveBatch(std::vector<PropPoseSnapshot>& out) {
+    bool TakeRemotePropDriveBatch(std::vector<PropDriveRow>& out) {
         out.swap(incoming); incoming.clear(); return !out.empty();
     }
 };

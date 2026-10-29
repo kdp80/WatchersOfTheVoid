@@ -1,3 +1,286 @@
+# Remote glowstick grab repair (31 October 2026)
+
+UG1 implementation completed. Cooked prop_glowstick_C.playerGrabbed_pre enters
+its graph at 1044 and calls only releaseGlowstick. That body's exact sequence is
+BreakConstraint, hook detachment, sticked=false, stick=false and tick disable;
+it does not invoke prop_C.playerGrabbed_pre. All eleven cooked variants inherit
+the prelude/release without overriding them. The receiver previously invoked
+the prop_C body and could park a glowstick while its native constraint remained.
+
+Completed changes, individually:
+
+1. Route remote glowstick grabs through the exact declaring releaseGlowstick
+   body, including its inherited variants. Ordinary props retain the base body;
+   wall-attachable props retain component unstick.
+2. Bind native-prelude admission to actor serial, hold generation and world.
+   An applied versioned hold runs once, including repeated drive-start attempts.
+3. Reserve admission before native dispatch to reject recursive receiver entry.
+4. Retry only a definite non-dispatch (class/function/frame not ready). An
+   attempted failed dispatch remains consumed, including unversioned packets.
+5. Refuse to park or drive while the prelude is incomplete; a possibly attached
+   body must not fight the remote transform. Failure diagnostics are latched.
+6. Cancel setup after native callbacks destroy/replace the actor, switch world,
+   reset the slot or install a successor hold. Check liveness before mesh access.
+7. Validate cached UFunction serials independently of their classes and reset
+   negative function lookup state when the declaring class is replaced.
+8. Add the production-wrapper/admission/native-contract suite to check_current,
+   with six must-fail controls for exact owner, function serial, repeat, reentry,
+   world retirement and uncertain dispatch.
+
+PASS run_glowstick_grab.ps1 -FaultControls: both C++ fixtures, complete cooked
+contract and all six controls. The maintained main list now contains 129 groups;
+this does not mean all 129 were rerun for this change. Focused current checks and
+the development build are recorded under build/glowstick-grab-check/verification.
+PASS all seven focused groups: glowstick grab, prop-drive lifetime, coin/hold
+arbitration, fork review, item batch, upstream integration and upstream refresh.
+Release/ABI verification passes with 883 source entries and DLL SHA-256
+`78854376471aa5bf1de6ad0d4820c43df8c9f9d499ab2f05fbf98b2e6bfb91c3`.
+Fact-row, public-prose and GC-pin gates also pass. `git diff --check` is clean.
+The previous audit's 128-group result remains evidence for its earlier source
+stamp, not the changed implementation.
+
+- [ ] In-game acceptance: host/client pickup of attached glowsticks and all
+  variants, repeated pickup/drop, simultaneous grabs, late join and reconnect;
+  confirm constraint/hook release and ordinary/wall-attachable prop behavior.
+The broader stack-jitter report remains open. No package version was changed,
+and no game installation, commit, push or publication was performed.
+
+# Integration error audit (30 October 2026)
+
+Continued the existing upstream integration and the requested WORK/TODO code
+audit. This is development verification, not a new package. The previous merge,
+its b2218 protocol change and the 2164 development directory predated these
+repairs. The last qualified package remains 0.9.2163 / b2217 in release.json.
+No game installation or multiplayer acceptance was performed.
+
+Completed production repairs, individually:
+
+1. Allow the owned bind-wait replay to apply the exact pending PropDriveEnd;
+   its closed generation had incorrectly rejected its own replay.
+2. Validate the cached actor serial before same-generation pose application.
+3. Validate that serial before returning physics during drive replacement.
+4. Validate that serial before applying a host-side end.
+5. Restore angular-only release motion; keep all-zero final motion asleep.
+6. Revoke the client syncer before the non-component crowbar unstick fallback.
+7. Remove the unused cord_drill config row and its obsolete include file.
+8. Remove the unused cord_pos_drill config row with that file.
+9. Remove the unused container_retry_red config row.
+
+Completed regression/tooling repairs, individually:
+
+10. Make the drive fixture select Client/Host explicitly and model missing
+    registry bindings independently of object-array address reuse.
+11. Add the maintained prop-drive runner with four must-fail fault controls;
+    include it and the 2124/2126 suites in check_current.
+12. Use production 32-peer capacity in the shared Session double.
+13. Use production peer capacity in the shared players Registry double.
+14. Update shared save callback signatures and provide a trapping Kick boundary.
+15. Keep run_item_batch include arguments as an array even for one include.
+16. Correct garden batch inspection to use the actual captured chunk member.
+17. Check admitted whole batches during profile-join world retirement.
+18. Check admitted whole batches during profile-receive cancellation.
+19. Preserve the shared-screen partial-refusal assertion as one admitted chunk.
+20. Supply the actor save-key boundary required by both cord fixtures.
+21. Restore Rufus config declarations and its current typed diagnostic row.
+22. Repair 2124 fixture linking and generated-control include paths.
+23. Update gravity fixture reflection/resolution/interceptor boundaries.
+24. Add service-panel coverage for valid slot 31 and invalid slot 32.
+25. Repair generated-control include paths in 2126, 2127, 2128 and 2129.
+26. Update the lightswitch fixture's class, parameter frame and typed hooks.
+27. Update save-receive audit callbacks and verify host authorship at the
+    production Session policy boundary; retain CRC/raw/compressed/refusal tests.
+28. Add explicit save-audit boundaries for the integrated lifecycle hooks.
+29. Point the native key-reader assertion at prop_keys.cpp.
+30. Resolve generated drop-source includes in run_2132.
+31. Add trapping drone-wrapper boundaries for unrelated integrated methods.
+32. Check lift join and world-ready wiring in their actual split source files.
+33. Replace obsolete lift Apply/Mirror/Release fixtures with the maintained
+    native-replay suite; retain run_2134 as a clearly documented alias.
+34. Carry seven applicable expiry/lifetime/parameter/flag fault controls into
+    run_2136; all 17 controls reject their mutants.
+35. Repair fire cancellation and subclass-call mutation anchors in run_2137.
+36. Supply integrated hand-pose, world identity, roster and gun-visual boundaries.
+37. Give the hand fixture an explicit current local player during reset.
+38. Remove duplicate boundary definitions from the including hand-generation test.
+39. Update the player-state Registry/vitals interfaces, typed guard registration
+    and explicit unexercised dependencies; repair generated include paths.
+40. Add trapping adjacent reflection/gun/offset boundaries to the fire wrapper.
+41. Check revive's actual readable zero-burning-time success condition while
+    retaining extinguish-before-health-before-dead-clear ordering.
+42. Extract hold arbitration from remote_prop_drive.h/.cpp after the source split.
+43. Match the coin/hold arbitration fixture's drive array to peer capacity.
+
+Verification:
+
+- Full check_current run: 125/128 passed initially. The failures were duplicate
+  hand-fixture definitions and the two obsolete arbitration extraction paths.
+  After repairs, all three focused rechecks passed against the SAME production
+  source stamp and DLL. Thus all 128 current groups have passing results across
+  the two runs; this is not a fresh single-run release qualification.
+- The 12 supplemental entry points pass after repairs. They represent 11
+  distinct suites because run_2134 delegates to run_2136. This supersedes all
+  supplemental fixture failures listed in the historical reconciliation below.
+- Eight source gates pass: registry, peer connection, MinHook absence, GC pins,
+  atlas regime, master contact, fact rows and data paths. Registry: 348 rows plus
+  five font roles, including rejection controls. Fact rows: 615 in 190 files.
+- Server `cargo test --locked --offline`: 118 library, 6 master, 7 signaling and
+  1 connection-cost tests pass (132 total), with no failed tests.
+- Release development build and ABI/source verification pass: 883 source entries,
+  product identity 0.9.0n b2218. DLL SHA-256:
+  `1e25864c09633f0d76cb10abd5410795cd28343caf8ce4769236f70d3ab46946`.
+- Four prop-drive removal controls fail at their intended assertions. Existing
+  2124, 2126, player-state/fire and restored supplemental mutation controls pass.
+- At the final continuation, Git reported a clean merged checkout with no
+  unmerged index entries. Documentation conflict resolution is complete; no
+  commit/push was issued by this audit. WORK UP1/UP7 move to this completed log.
+
+Evidence: `build/work-todo-audit/verification.json` and its original logs,
+`build/work-todo-audit/recheck/verification.json`, supplemental logs/results,
+`build/work-todo-audit/recheck/audit-summary.json`, and
+`build/work-todo-audit/server-tests.log`. Original failed-run evidence is retained.
+The summary explicitly distinguishes combined verification from packaging.
+
+The client stack-jitter report is NOT closed by these repairs. Remaining
+event/entity/resource/mod adapters and UP2–UP6 stay open in WORK/TODO. Offline
+fixtures cannot establish native PhysX contacts, rendered parity, Vulkan device
+replacement or a real two-player session. No claim of 75 completed fixes is made.
+
+# TODO/WORK reconciliation (29 October 2026)
+
+The owner's pasted WORK selection exposed an empty Shared items and resources
+section in TODO. Copied its eight unfinished console/item/resource entries into
+that section with their existing constraints. All fifteen selected entity entries
+were already present in TODO and were not duplicated. All entries remain unchecked;
+this is tracking reconciliation, without implementation or gameplay verification.
+
+# Planned-gap review (29 October 2026)
+
+Read live VOTV-MP/Multivoid status and Known limits in props, devices, signals,
+vehicles, events-and-weather, base-computer, deployables and players; read its
+16 returned open issues and the live gxrxrt/WatchersOfTheVoid agent/TODO.md.
+Open issue/PR searches across the other 46 repositories from the existing
+build/fork-review-20261028 inventory returned no entries. This reuses that
+inventory; it is not a fresh fork enumeration or an all-branch code audit.
+Empty issue searches do not establish that a fork has no unpublished plans.
+
+Compared candidate limits with current local production controllers and the
+implementation backlog. Added UG1–UG8 to TODO with source links and recorded
+their local boundaries in WORK. Known limits are not upstream commitments;
+issue #49 is an open request, with local runtime reproduction still required.
+The fork's remaining event/entity/resource implementations already overlap
+WORK; its gameplay acceptance, optional features and publication tasks were
+not added as new implementation defects.
+
+Excluded stale upstream gaps already covered locally: upgrade_sync levels,
+ATV modules/steering/honk/condition adapters, coingun E-press/commit paths,
+shared SAT output, garden hose actions, prop-knock propagation and receiver
+hold arbitration. Existing client-physics and event/entity/resource gaps retain
+their current backlog owners. In-progress upstream integration may supersede
+individual candidates and must be reconciled before implementing them.
+
+Documentation-only review: no production code, version, build, package or game
+installation changed by this task. No gameplay result or regression pass is
+claimed. Pre-existing merge conflicts and concurrent integration edits remain
+outside this review.
+
+# Joined-client prop physics report (29 October 2026)
+
+Owner forwards a user's report: their friend's hosted game appears to work for
+the host, but the joining client sees widespread object jitter. Objects resting
+on boxes, desks and workbenches vibrate, launch away or clip through the support.
+The reporter asks whether a setting fixes it. Exact mod/game versions, other
+mods, latency/loss and whether the host sees the resulting displacement are
+unknown. This is a user report, not a locally reproduced or resolved defect.
+
+Source inspection: current config_registry_rows.inc contains network rate and
+diagnostic impairment controls, but no dedicated user-facing stack-physics fix.
+Ordinary Aprop_C poses in active_drive.h snap to the latest transform; the
+prop_drive_stream route parks simulation during drive and restores it at the
+end. These are investigation leads, not evidence of the reported root cause.
+No production change or runtime check accompanies this report.
+
+- [ ] Capture matching host/client versions, mod lists, latency/loss and logs;
+  determine whether the host also sees objects move after the client's jitter.
+- [ ] Reproduce resting single objects and stacks on boxes, desks and workbenches;
+  compare both roles before/after pickup/drop and a late join, tracing drive/park/
+  end transitions and native simulation state.
+
+# Tracking cleanup (29 October 2026)
+
+Owner requests implementation-only TODO and WORK. Both now contain unfinished
+code/tooling work; completed reports and game-only follow-ups are removed from
+WORK. The development target is 0.9.2164; the last qualified package remains
+0.9.2163 / b2217. No release metadata, production code or package changed.
+Historical references below to completed items or checks in TODO/WORK describe
+those documents before this cleanup; current implementation scope is in the
+cleaned documents. This edit does not close any game report or add test evidence.
+
+Game-only follow-ups retained from WORK (all pending):
+
+- [ ] Remote flashlight beam/mode/battery, clicks and immediate-join state on
+  matching host/client DLLs; replacement, readiness and native drift behavior.
+- [ ] Ragdoll reports 5/50: C-key/faint/fall entry and recovery, standing/crouched,
+  repeated use, slopes and stock/selected/custom rigs on every role. Include
+  reference-pose transfer and native physics-to-render takeover.
+- [ ] PC loading reports 54/55: boot, input, handoff, repeated power cycles,
+  entering/leaving during boot, power loss/restoration and join/reconnect.
+- [ ] Switches, doors, transformer repair, lamp/ambient presentation and remote
+  drone contents immediately after joining; simultaneous users and replacement.
+- [ ] Real 2–32-player admission/full/reuse, selector layout/input and group load;
+  matching capacity on the deployed master. No master deployment is recorded.
+- [ ] Tutorial chapters, host/client joins and native Solar/Sandbox behavior;
+  icon generation/quick-slot recovery after empty or stale cache files.
+- [ ] Host/player-body prop contacts, blast motion, pickup/handoff and late joins;
+  preserve the current motion lanes 188/191 (upstream ExplosionSpawn177 conflicts
+  with KitchenState177).
+- [ ] Companion ATV garage creation, late-loaded saved rigs, no third body,
+  steering/honk, driver/carrier/seat handoff, save/reload and reconnect.
+- [ ] Seated body/head/light alignment, chair angles, tilted supports, banked
+  vehicles, IK restoration, custom rigs and 32-player presentation load.
+- [ ] Sleep unanimity, awake/joining/dreaming vetoes, paced wake input and
+  replacement/reconnect; personal nightmares and rewards. Per-mattress capacity
+  remains an optional deferred suggestion; existing packets name bed classes.
+- [ ] Inventory/profile and world-container join/rejoin, held/container UI,
+  ejection/extraction, concurrent use and native volume/mass/name recovery.
+- [ ] Food/MRE/native package outputs, repair/material/resource transitions and
+  grill use across peers, including refusal, handoff, disconnect and save/reload.
+- [ ] Console input, simultaneous use, clear/history/busy state and native world
+  command effects; laptop/shared-screen inherited-state handoff and slow UI.
+- [ ] Held/world toy sounds, watoy cues/physics, native reflection schemas and
+  audio phase/timing; hand readiness, body/world replacement and joins.
+- [ ] Sponge/window foam and original-dab presentation, cleaning and stock;
+  bleeding/stain layout, stopping, cleaning, late joins and save parity.
+- [ ] Event outcomes/repeats, simultaneous triggers, frequency changes, loading,
+  late join/reconnect and teardown; personal dream/ending consequences, calendar
+  gates, shared sky phases and blank-email Ariral appearance/warp-arrow report.
+- [ ] Wisp grab/release/tear animation and limb/blood effects; other entity
+  actions/effects and native schemas. Actor admission alone does not close them.
+- [ ] Main-menu branding after restart, manager archive startup and combined
+  upstream adaptations. Existing fork/mod scenarios remain listed below.
+- [ ] Bench58: reproduce the host rifle disappearing after placement; capture
+  class/key and destruction caller/timing with VOTVCOOP_PROP_BIRTH_KEY_PROBE=1.
+  prop_rifle_C remains a candidate, not a confirmed cause.
+- [ ] Token52: identify the original UI and observe credit/spend/refusal/join;
+  shared saveSlot.Points is still a hypothesis.
+- [ ] Trowel: capture an actual key/stock mismatch through hand/slot/drop.
+  Existing native graphs preserve non-None keys; do not invent a repair from
+  the unconfirmed report.
+- [ ] Native VM stack overflow: confirm the initiating caller of recursive
+  lib_C.end; Untitled_1.CustomEvent's borders guard remains a candidate.
+  Evidence: build/requested-events-native/crash-analysis-20261024.md.
+
+Supplemental fixture failures remain failures, not game defects or passes:
+run_2124 (four/32 seats), run_2126/run_2129 (generated-control includes),
+run_2127 (gravity linkage), run_2128 (lightswitch internals), run_2129_audit
+(save callback signatures), run_2131 (Registry API), run_2132 (source assertion),
+run_2134 (lift API), run_2135 (drone dependencies), run_2136 (pump assertion),
+run_2137 (cancellation anchor), run_2138/run_2175 (hand dependencies).
+Historical inventory: build/audit-supplemental-final/results.json and runner logs;
+newer qualification sections supersede older results where explicitly recorded.
+The fork review separately exposed run_2126's obsolete ServicePanel fixture.
+Last WORK prose counters: documents 85/82, src.comment_doc_row 155/0,
+src.files_not_swept 84/0; fact rows passed 565 rows / 181 files. These are retained
+historical findings, not gates rerun by this documentation edit.
 # Release 0.9.2163 qualified offline (28 October 2026)
 
 Owner requests a 2163 release build. Cleanup preview and execution completed
@@ -69,7 +352,7 @@ was weakened to make it pass.
 # Requested third-party mod compatibility (28 October 2026)
 
 Static audit completed for eleven downloaded, SHA-256-recorded Thunderstore
-archives. Exact versions and findings are in WORK. Local read-only inspection
+archives. Exact versions and findings are in the retained archive manifests and inspection.json files. Local read-only inspection
 found only the base game PAK at the installed Paks root; no r2modmanPlus-local
 profile was found at the checked standard AppData path. This does not exclude
 a portable manager/profile elsewhere. No two-player run or install was made.
@@ -457,7 +740,7 @@ Regenerate from current call sites; recheck PASS (443 entries).
 Run all 37 scripts absent from the main runner's direct list as well. Initial
 supplemental result: 18 pass / 19 fail. Repair legacy toolchain, Python and
 research paths and run with the portable build environment: final 23 pass /
-14 fail. Details and per-runner causes are in WORK and
+14 fail. Per-runner causes are retained in the tracking-cleanup entry above and
 build/audit-supplemental-final/results.json; preserve failures without weakening
 assertions. Some supplemental scripts are already transitively covered by the
 main suite, so these counts are script runs, not independent unique test groups.

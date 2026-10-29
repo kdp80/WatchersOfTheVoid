@@ -1,4 +1,64 @@
+# Current upstream refresh checks
+
+`run_upstream_containers.ps1` executes the 320 production container codec,
+escrow, reservation, take/put, overlap wait/arming and refusal selftest checks,
+plus a slot-31 hold lifecycle. Pure decision bodies are extracted from their
+production owners; serialization/state/selftest translation units compile directly.
+Native lookup boundaries remain doubled, so this is not a gameplay acceptance test.
+
+`run_fork_watch_cache.ps1` executes the real name-watch registration/cache bodies
+and registry. It proves that 100000 dead re-ensures do not consume slots, equal
+text at another address reuses the entry, and stale cache slots fall back safely.
+The cache runner also checks 10000 CDO hits, serial/name retirement, hash-owner
+mismatch and retryable misses against the production lookup. Both runners are
+part of check_current.
+
+`run_container_apply.ps1 -FaultControls` now targets the integrated container
+apply rather than the retired client CAS policy. It preserves allocation/readiness,
+packed personal flags, object/store/header identity, newer reentrant input,
+sender/session/world retirement, arming callback retirement and commit timing.
+Five mutations must fail: unchecked record, stale commit, lost binding, early
+completion and lost newer parked row. Native extraction/recovery suites remain.
+The migrated seed test executes the split production publisher, seed queue and
+retry drain, retaining exact-recipient refusal and slot reuse controls.
+
+The imported portable CI balance, rapid-record and coin drills use current
+session/native admission contracts. On Windows they support portable MSVC/Ninja
+as well as installed Visual Studio, and write artifacts under build/.
+
 # Regression tests
+
+`run_glowstick_grab.ps1 -FaultControls` executes the actual prop-event wrapper
+with production ParamFrame and the extracted production grab-admission helper.
+It checks exact glowstick release ownership, ordinary base fallback, readiness,
+class/function/actor replacement, world retirement, reentry, disconnect, successor
+holds and uncertain dispatch. Six mutations must fail assertions. The cooked
+native contract checks releaseGlowstick's complete body and all eleven inherited
+variants. This runner is included in check_current; engine constraint/rendered
+acceptance remains separate.
+
+`run_prop_drive_lifetime.ps1 -FaultControls` executes the actual prop-drive
+receiver, host and bind-wait implementation. It checks ends received before
+binding, reordered generations, local/remote hand ownership, reused object
+slots, angular-only release velocity, sleeping rest and refused host sends.
+Four mutations must fail assertions: lost bind replay, pose serial bypass,
+host-end serial bypass and lost spin. This runner, `run_2124.ps1` and
+`run_2126.ps1` are now included in `package/check_current.ps1`.
+
+The supplemental runners use current typed function rows, two-argument save
+sinks, actual batch-admission semantics and production peer capacity where
+they share the general Session/Registry doubles. The service-panel fixture
+explicitly accepts slot 31 and rejects slot 32. Boundaries outside each
+fixture's scope are doubled; these are not live-engine multiplayer tests.
+
+`run_2134.ps1` is a compatibility alias for `run_2136.ps1`, not an independent
+suite. The obsolete lift Apply/Mirror/Release fixtures were removed after
+comparison with their native-replay successor. Remaining request expiry,
+departure, callback occupancy, reentry, epoch, parameter-binding and flag-mask
+mutation checks were carried into the successor. Physics-loan restoration and
+moving-latch release no longer apply: the current wrapper never takes that loan
+or suppresses native lift motion. Native Blueprint evidence is in
+`blueprint_lift_2136_test.py`.
 
 `run_fork_review.ps1` executes the actual power-grid registration/readiness
 fixture, player-body prop contact/coasting, laptop/shared-screen lease and

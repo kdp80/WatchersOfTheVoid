@@ -309,3 +309,16 @@ int main(){using namespace test;
 }
 
 namespace ue_wrap::notebook { bool IsNotebookSheet(void*){return false;} }
+
+namespace coop::dev::container_route_census { bool IsEnabled(){return false;} }
+
+// Throw election is checked by the upstream container/throw suites; these are placement lifecycle boundaries.
+namespace coop::prop_throw {
+uint16_t ThrowSeqFor(void*){return 0;}
+bool JudgeDropIntent(net::PropDropIntentPayload&,uint8_t){return true;}
+void NoteMark(const std::wstring&,uint8_t,uint16_t,const float*){std::abort();}
+}
+namespace ue_wrap::engine {
+bool GetActorRootPhysicsVelocity(void*,FVector& lin,FVector& ang){lin={};ang={};return true;}
+bool SetActorRootPhysicsVelocity(void*,const FVector&,const FVector&){std::abort();}
+}

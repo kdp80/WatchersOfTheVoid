@@ -13,9 +13,10 @@ remote player models, text and positional voice chat, and shared-world synchroni
 
 ## Development — 0.9.2163
 
-The active public version is **0.9.2163**, targeting **VotV Alpha 0.9.0n**.
-Internal DLL/network identity remains **b2217 / protocol 2217**. Continuations
-add fixes to this version; a new public version requires the owner's request.
+Development targets **0.9.2164** and **VotV Alpha 0.9.0n**, with
+**b2219 / protocol 2219** after the upstream container and throw integration.
+The last qualified package remains **0.9.2163 / b2217**; its archive and release
+metadata are retained. A 2164 package has not been prepared.
 
 Current work includes Tutorial join placement and inventory-icon cache repair, killer-wisp lifetime guards, selected fork fixes and six selectable hosting game modes, reflected flashlight state and replacement replay, explicit ragdoll physics blending, guarded held-toy audio and watoy ownership, and capture of native held/thrown sponge window dabs,
 with the existing co-op, 2-32-player, inventory, event and native-action fixes.
@@ -41,6 +42,11 @@ The development hosting window offers **Players (including you)** under session
 settings: choose 2–32 with minus/plus or use 2/4/8/16/32 shortcuts. Both hosting
 menus remember the same choice for your next session (`net.player_limit`).
 These chooser improvements are included in package 0.9.2161.
+Transport is GameNetworkingSockets: 13 unreliable pose and state streams, a voice stream beside
+them, and one reliable ordered channel whose payloads are 196 message kinds. Each machine's engine
+re-derives animation, physics and rendering from the streamed state. The host is authoritative for
+world state, randomness and NPC simulation; a client acts by naming an intent that the host
+performs.
 
 Transport uses GameNetworkingSockets with positional voice and reliable state lanes.
 Each machine's engine performs its local simulation.

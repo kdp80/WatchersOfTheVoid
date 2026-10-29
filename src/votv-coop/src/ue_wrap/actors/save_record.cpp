@@ -566,6 +566,16 @@ bool CaptureRecord(void* actor, SaveRecord& out) {
     return CallForRecord(actor, getFn.Get(), out) && current();
 }
 
+bool CaptureOwnRecord(void* actor, SaveRecord& out) {
+    if (!actor) return false;
+    const ClassVerbs* v = VerbsFor(R::ClassOf(actor));
+    return v && v->getData && CallForRecord(actor, v->getData, out);
+}
+
+bool IsPropClass(void* cls) {
+    return cls && EnsurePropClass() && R::IsDescendantOfAny(cls, &g_propCls, 1);
+}
+
 bool ApplyRecord(void* actor, const SaveRecord& r, ClassResolver resolve) {
     return ApplyRecordWhile(actor,r,[]{return true;},resolve);
 }

@@ -16,7 +16,7 @@ static_assert(static_cast<uint8_t>(ReliableKind::Watoy)==235);
 static_assert(sizeof(KavotiaStatePayload)==25);
 static_assert(AuthorshipOf(ReliableKind::KavotiaState)==ClientAuthorship::Host);
 static_assert(AuthorshipOf(ReliableKind::Watoy)==ClientAuthorship::Client);
-static_assert(sizeof(PropDropIntentPayload)==188 && offsetof(PropDropIntentPayload,requestId)==184);
+static_assert(sizeof(PropDropIntentPayload)==214 && offsetof(PropDropIntentPayload,requestId)==210);
 static_assert(sizeof(PropPlacementResultPayload)==101 && offsetof(PropPlacementResultPayload,code)==100);
 static_assert(AuthorshipOf(ReliableKind::PropPlacementResult)==ClientAuthorship::Host);
 static_assert(AuthorshipOf(ReliableKind::PropDropIntent)==ClientAuthorship::Client);

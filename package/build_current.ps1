@@ -8,7 +8,7 @@ New-Item -ItemType Directory -Force -Path $evidence | Out-Null
 function ProductionStamp {
  $production=Join-Path $root 'src/votv-coop'
  $files=@(Get-ChildItem -LiteralPath (Join-Path $production 'include'),(Join-Path $production 'src') -Recurse -File | Where-Object {$_.Extension -in @('.h','.hpp','.cpp','.inc','.rc')})
- $files+=Get-Item -LiteralPath (Join-Path $production 'CMakeLists.txt'),(Join-Path $production 'sources.cmake')
+ $files+=Get-Item -LiteralPath (Join-Path $production 'CMakeLists.txt'),(Join-Path $production 'sources.cmake'),(Join-Path $production 'sources_ue_wrap.cmake'),(Join-Path $production 'sources_dev.cmake')
  $rows=foreach($file in ($files | Sort-Object FullName)){$file.FullName.Substring($production.Length)+':'+(Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash}
  $sha=[Security.Cryptography.SHA256]::Create()
  try{([BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes(($rows -join "`n"))))).Replace('-','').ToLowerInvariant()}finally{$sha.Dispose()}
