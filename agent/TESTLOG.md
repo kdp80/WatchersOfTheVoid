@@ -1,3 +1,157 @@
+# 2164 cleanup and source synchronization (4 November 2026)
+
+Development target remains **0.9.2164**, protocol **2219**. The retained release
+is **0.9.2163 / b2217**; release.json and its qualified archive/DLL are unchanged.
+The source transfer reaches upstream `4fbf1acf0e0ec7d14350132cd3de01d6a86aa552`,
+rechecked through GitHub on 4 November. The provenance inventory accounts for
+436 upstream graph commits: 306 from the earlier source integration and 130
+newly transferred commits. This is source integration, without an ancestry merge.
+
+Completed repairs and maintenance, individually:
+
+1. Remove generated/obsolete artifacts after a reviewed cleanup preview:
+   2687 files, 1209518305 bytes (1153.5 MiB) in the initial pass. Preserve active
+   dependencies, unique source/research/crash evidence and the qualified archive/DLL.
+2. Restrict research cleanup to generated extensions, preserving research sources.
+3. Preserve active CMake build directories in subsequent cleanup passes.
+4. Remove 28 unused fixed-version build/check/pack/verify/qualification scripts;
+   keep the current parameterized package workflow.
+5. Remove the retired container_write_policy header/implementation, superseded
+   by host container acts.
+6. Remove the five approved orphan coordinate-tower/hit-intent source files;
+   devices/coord_tower, fuse_tower_kind and player/hit_intent remain their owners.
+7. Remove the unused container_throw_no_velocity configuration row.
+8. Remove the unused container_throw_scale configuration row.
+9. Remove the unused pr64_coin_local_credit_red configuration row.
+10. Import upstream host container request/reply/commit, escrow and reservations.
+11. Import container overlap judgment and arming while retaining native extraction
+    publication and its exact takeObj fingerprint.
+12. Retain checked container record/class readiness before any live mutation.
+13. Retain actor/store/header/sender/session/world identity checks across callbacks.
+14. Complete container application before redraw/derived callbacks, without a
+    partial live commit; retain newer reentrant input.
+15. Park over-capacity host birth records instead of losing the added records.
+16. Retire only the captured parked revision after successful application.
+17. Preserve exact-recipient seed debt, readiness retries and sender/recipient
+    generation checks in the split container publisher.
+18. Make new host container write helpers validate class/record/store identities.
+19. Preserve packed personal-container flags and correct split inventory indices.
+20. Balance nested native takeObj scopes and retain a nonconsuming recent-take window.
+21. Import native throw sequence/election and damage bounds, separately from PvP nonce.
+22. Retain native launch velocity, placement request identity and food restoration.
+23. Import velocity/time-bearing PropDriveRow while retaining heartbeat, generation,
+    serial and local/remote hand ownership guards.
+24. Import snapshot bracket position waits while preserving local held actors.
+25. Keep published reliable IDs; HitIntent retains 242, new container acts use
+    264/265/266 and reliable kinds remain 16-bit.
+26. Preserve PropRelease/PropDropIntent fork fields at 94/214 bytes and reject old
+    protocol headers through the actual parser.
+27. Keep the native glowstick prelude, food mutation guard and owned coin admission.
+28. Split engine source registration and include all new owned translation units;
+    build verification now audits all three CMake source lists and duplicates.
+29. Adapt Ghezra `97f1f6072`: disable body shadows on both puppet meshes through
+    checked, serial-aware native dispatch.
+30. Adapt Dafirka `d52f22cfc`: cache name-watch lookup and reuse settled dead watches.
+31. Adapt Dafirka `61874dfdf`: settle deer destruction-watch registration once.
+32. Adapt Dafirka `979c95e8c`: settle centipede destruction-watch registration once.
+33. Adapt Dafirka `4a945e3a7`: settle mannequin destruction-watch registration once.
+34. Adapt Dafirka `15fa7c39a`: preserve serverbox delivery state on same-session Install.
+35. Adapt the reflection part of Dafirka `593b7900c`: cache CDOs with class identity,
+    object serial and names; retain the fork's callback-safe console checks.
+36. Exercise the integrated container production codec/state/decision selftests:
+    320 checks plus slot-31 lifecycle coverage.
+37. Migrate container apply/seed fixtures to the integrated owners, retaining
+    readiness, exact-recipient, revision, callback and lifetime assertions.
+38. Add production name-watch and CDO cache fixtures, including 100000 dead
+    re-ensures, 10000 cache hits, slot reuse and retryable misses.
+39. Adapt portable upstream balance, rapid-record and coin CI drills to the
+    retained native/session contracts; Windows outputs now stay under build/.
+40. Update adjacent regression doubles and extraction paths without skipping
+    the existing glowstick, placement, food, physics or native-contract checks.
+41. Recheck 50 known reachable fork heads; account for all 41 additional Ghezra
+    commits through `33d98330c`. Arigalit now matches integrated upstream;
+    Dafirka and the other 47 reachable heads are unchanged.
+42. Adapt Ghezra `25b3d247b`: permit full-disc save bodies above 32 KiB within
+    the blob capacity, preserving decoder/rate/park bounds.
+43. Adapt its slot half: reserve outer-header space, retain canonical splitting
+    and refuse over-capacity data. Both new size regressions fail before the fix.
+44. Resolve the repeated merge of the original `f9ad5ef9c` input against the
+    integrated `6604633bf` tree: 80 unmerged paths, preserving the 2164 side.
+45. Remove the automatically merged obsolete PropPoseSnapshot overload from
+    session.h; PropDriveRow remains the active declaration.
+46. Restore outbound PvP throw nonce minting, both wire bytes and local NoteThrow;
+    keep the native throw sequence separate and require a valid local peer slot.
+47. Restore the outbound Kerfur transfer marker and suppress throw/coast for
+    that edge; consume the marker once, including unrelated/trash release edges.
+48. Bind the deferred Kerfur marker to object serial/world through CachedObjRef,
+    so a recycled address does not mark a successor actor as robot-held.
+49. Remove duplicate prop_drive_host and chrono includes from local_streams.cpp.
+50. Add the production release-edge fixture to check_current. It first fails on
+    the missing nonce; checks include transfer, next release, address reuse,
+    dead actor, slot 31/32, velocity, trash suppression and both network roles.
+51. Reconcile WORK/TODO with completed wire/build/fixture work; remove the stale
+    supplemental-test and 2126/service-panel repair entries already verified.
+52. Record unresolved semantic/gameplay work and new exact fork candidates in
+    the existing documents; do not mark stack jitter, native parity or adapter
+    coverage complete from offline tests.
+53. Correct the unused-declaration analyzer's reach through private headers;
+    ATV companion calls must not be mistaken for unused APIs.
+54. Resolve simple local macro includes and undef in that analyzer; profile
+    join calls inside player_join_apply.inc must retain their actual owners.
+55. Add positive and negative include-reach regressions, including shared-header
+    context isolation. Both new positive cases fail before the fix; all eight
+    tests pass after it. Keep baseline values unchanged.
+56. Preserve the previous cleanup run in the existing inventory before recording
+    another run, retaining the exact earlier removal evidence.
+57. Restore InstallInventory in the active session pump, so retained native
+    extraction birth publication and retry draining actually run. The new
+    source/native contract fails with the missing call and passes after wiring;
+    the existing production-controller/lifetime suite remains active.
+
+Verification before the interrupted Git merge: **131/131 groups**, stable-source
+guard, Release and ABI/source inspection pass under
+build/sync-2164/qualified-final. DLL b2219 SHA-256:
+`2bf7225a968bc931fec6f2376c91cd5ff39e881f6c9bacb324db97ce7a92c3dc`.
+This qualifies that earlier source stamp, not the later sender/full-disc fixes.
+An intermediate 132-group run under build/sync-2164/final-20261104 saw the newly
+added include-reach regressions before their implementation (131 passed, one
+failed); the isolated eight-case recheck passes after repair. Its source stamp
+was then superseded by the extraction-pump wiring fix. The final stable-source
+132-group run is recorded under build/sync-2164/stable-20261104: **132/132 PASS**,
+stable-source guard and Release/ABI/source inspection PASS, 1232 source entries.
+Final DLL SHA-256:
+`ee8574eab93b325cb5e9f9587bec3e6a652a7c539f99a4a1c1588bc63c67761b`.
+Production snapshot SHA-256:
+`c4757486b6903fb6a0ed32d2a206c8be1d63632f997506f50b5bf4230c365304`.
+After this run, reviewed cleanup removes another 880 regenerated test/cache files
+(652.0 MiB), retaining the final development DLL, logs and the qualified package.
+The earlier 2687-file run remains in cleanup-inventory.json.previousRuns.
+
+Focused PASS: production release edge; full-disc record and event-slot fixtures;
+all four prop-drive must-fail controls; all five container-apply controls and six
+glowstick controls. The three imported CI drills pass (11 balance, 10 rapid-record,
+12 coin checks). Server `cargo test --locked --offline` passes 132 tests.
+Fresh fact-row gate: 624 rows in 198 files. Registry: 371 rows plus five font roles,
+including rejection controls. Earlier peer connection, MinHook absence, GC pin,
+atlas, master contact, data-path, workflow-expression and public-leak gates pass.
+
+The full public-prose gate remains above its baseline. The original pre-transfer
+HEAD was already red; the merged tree also has added stale source citations and
+other prose findings. Do not call CI fully green or raise the baseline to hide
+these. Evidence: build/sync-2164/public-prose-head.json and the current prose log.
+The final prose report has 14 counters above baseline. The include-reach repair
+and extraction-pump wiring reduce the declaration counter from 27 to 19; the
+remaining hits require individual review, not automatic deletion. For example,
+the unchecked WriteSaveRecord wrapper remains an intentional fault-control
+boundary. Source census finds 1232 owned CPP files, all listed once and present.
+Final gate evidence: build/sync-2164/public-prose-complete-20261104.log.
+
+No new package, game installation, commit, push or publication was performed by
+this work. The user's intervening Git merge now has no unresolved paths; its
+merge metadata remains pending a commit. Two-player native physics, rendered/audio
+parity, container/throw handoffs and Vulkan teardown still need real gameplay.
+UP2/UP4/UP5/UP6 and the implementation backlog remain open with their constraints.
+
 # Remote glowstick grab repair (31 October 2026)
 
 UG1 implementation completed. Cooked prop_glowstick_C.playerGrabbed_pre enters

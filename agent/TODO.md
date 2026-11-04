@@ -32,6 +32,11 @@ semantic review. Offline wire checks use b2219, including IDs above 255;
 Scope: [WORK.md](WORK.md#upstream-integration-in-progress). Completed conflict,
 fixture and build checks are recorded in TESTLOG; gameplay remains unverified.
 
+The 4 November fork recheck adds three concrete follow-ups: concurrent disc
+insert ownership, host-admitted module purchases and transient spawner provenance
+at join. Their implementation constraints are in
+[WORK.md](WORK.md#fork-follow-ups--reviewed-4-november-2026).
+
 ## Events
 
 - [ ] Complete remaining native adapters for Dreams, Ariral Reputation,

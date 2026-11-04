@@ -74,6 +74,14 @@ bool SendBlobToSlot(net::Session*,int,net::ReliableKind,uint32_t,const std::vect
 }
 namespace coop::laptop_buffer_sync {void PrimeQuadBaseline(){++test::primes;}void QueueConnectBroadcastForSlot(int){}}
 int main(){using namespace test;
+    Reset();auto fullDisc=Value(std::vector<std::wstring>(32,std::wstring(1500,L'x')));
+    fullDisc.c.objectData=std::wstring(5000,L'j');
+    std::vector<uint8_t> packed;
+    CHECK(S::PackOne(0,fullDisc,packed));
+    CHECK(packed.size()>32768 && packed.size()+8<=coop::blob_chunks::MaxBlobBytes());
+    fullDisc.c.objectData=std::wstring(coop::blob_chunks::MaxBlobBytes(),L'j');
+    CHECK(!S::PackOne(0,fullDisc,packed));
+    puts("PASS full disc slot: 32 server rows with JSON fit; over-transport slot refused");
     Reset();const auto consumed=Value({L"note"});Stage(consumed);writeReady=false;
     Drain();CHECK(S::g_pendingCanonical.count(Key()) && writes==1 && native.c.data.size()==2 && S::g_shadow.empty());
     S::g_haveCanonical[static_cast<uint8_t>(box)]=true;S::g_shadow[Key()]=999;

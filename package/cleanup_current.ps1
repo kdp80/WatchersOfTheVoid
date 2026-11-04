@@ -107,6 +107,10 @@ if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash -ne $archiveHash
 if (-not $WhatIfPreference -and $existing.Count) {
     $inventoryPath = Join-Path $PSScriptRoot 'cleanup-inventory.json'
     $report = Get-Content -LiteralPath $inventoryPath -Raw | ConvertFrom-Json
+    if ($report.latestRun) {
+        $previous = @(@($report.previousRuns) | Where-Object { $null -ne $_ })
+        $report | Add-Member -Force -NotePropertyName previousRuns -NotePropertyValue @($previous + $report.latestRun)
+    }
     $report | Add-Member -Force -NotePropertyName latestRun -NotePropertyValue ([pscustomobject]@{
         dateUtc = [DateTime]::UtcNow.ToString('o')
         retainedPackage = $metadata.version_number

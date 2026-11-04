@@ -1,4 +1,33 @@
-# Fork and upstream refresh ? 1 November 2026
+# Fork head recheck — 4 November 2026
+
+Rechecked the 50 previously reachable default heads through GitHub. Only arigalit
+and Ghezra advanced: arigalit now matches the integrated upstream `4fbf1acf0`;
+Ghezra reaches `33d98330c`, 41 commits after the first review below. Dafirka stays
+at `593b7900c`. This recheck covers the known inventory, not newly created forks
+or every nondefault branch. Marlore was unavailable in the initial inventory.
+Exact results: build/sync-2164/fork-heads-recheck-20261104.json.
+
+| New Ghezra commits | Disposition against this fork |
+| --- | --- |
+| `25b3d247b` | Adapted both full-disc size fixes: complete save bodies may use the blob capacity; a slot reserves outer-header space. Keep checked native writes, sender budgets, canonical ordering and lifetime guards. Regression fixtures reject the old 32 KiB limits and still reject over-capacity data. |
+| `e345a2c5c` | Already covered by item_activate::TickConnect's 250 ms native-state poll, signature deduplication and refused-send retries. Preserve the existing world/player and recipient guards. |
+| `351c2de97`, `4b700fba2`, `20f069d3f`, `9f77019a2`, `4e43152b4` | Overlap the existing kitchen, grill, food condition and native action routes. Retain the fork's transaction and mutation guards; no wholesale kitchen/food wire replacement. Remaining output arbitration stays in WORK. |
+| `9c8d1e24f`, `a151c68c0`, `b0a738d4b`, `eccd87156`, `ff68b1264` | Overlap radio/media, dish/operator and world-sound routes. Preserve those owners rather than add parallel writers. Native rendered/audio parity remains unverified. |
+| `1bc4675d1` | Follow-up: exact ownership of concurrent disc inserts. Its unbounded claim queue and fixed 2.5 s eject delay do not supply this fork's occupancy, departure and uncertain-native-effect guarantees. Do not import a timer as proof of output completion. |
+| `13b120e67` | Follow-up: host admission for module purchases, distinct from level rows. The local module branch still runs natively; adding fork-specific direction values requires explicit admission, debit/output and retry design. |
+| `10b3a8c8e` | Follow-up: provenance for transient spawner drops during join. Do not exempt every actor with a lifespan or relax the incomplete-snapshot valve; those predicates do not establish personal ownership. |
+| `880a94727`, `99e48cd60`, `3d9b29f3f` | Travel-policy candidates. Do not silently disable backrooms or destroy personal ending/dream actors. Map exact native trigger, cancellation and session/world lifetime before adapting cleanup. |
+| `be135453f` | Shared save notices are a separate missing UI/wire feature; save refusal must not imply a successful write. No replacement of host save policy. |
+| `c5f90ee0a`, `c5e431dfb`, `7e5155084`, `557f79626`, `a62fedc24`, `700175fe6`, `860a85146` | Ambient creature/fixture, walker targeting/anger and beehive adapters extend existing entity work. Their new wire kinds cannot replace published IDs or the current creature owners. Keep the entity backlog open. |
+| `0205b2187`, `01bb30834`, `b2b36352e`, `6223bd7e1`, `175141e1a`, `d32fa0af0`, `a3a61615c`, `33d98330c` | Plant, fire, hose, spill, construction/nail and vent adapters need reconciliation with current garden/resource, damage, grime and event owners. Construction repair still needs one debit/output/refund transaction. Do not install parallel native writers. |
+| `661b5f96e` | Cache/poll refactor belongs to the new ambient lanes; those owners are not installed here. Retain the separately adapted watch/CDO caches and native lifetime checks. |
+| `c2212c777`, `c9e634433`, `f032763b9` | Optional browser filters and Ghezra's `bg` build identity are fork features. Keep this fork's own identity and compatibility checks. |
+| `cfaf9248d`, `85e9074f9`, `c9878576f` | Changes to that fork's live-game drills, not directly reusable production fixes. Keep the local offline suites and record native acceptance separately. |
+
+All 41 commits are accounted for above. Imported code does not establish gameplay
+acceptance for either fork. Original source transfer and prior fork fixes follow.
+
+# Fork and upstream refresh — 1 November 2026
 
 Development target: **0.9.2164**. Fetched upstream **4fbf1acf0e0ec7d14350132cd3de01d6a86aa552**.
 Git reports 436 upstream graph commits outside HEAD: 306 covered by the previous

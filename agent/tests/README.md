@@ -1,5 +1,19 @@
 # Current upstream refresh checks
 
+`run_local_release.ps1` compiles the production release edge and Kerfur arming
+function against the real protocol and CachedObjRef. It checks PvP nonce bytes
+independently of the native throw sequence, robot transfer/one-edge consumption,
+actor serial reuse, dead actors, slot 31/32, non-finite/slow/unreadable velocity,
+trash suppression and host/client coasting. It is part of check_current.
+
+The item-record and event-slot fixtures now exercise full discs beyond 32 KiB
+and refuse data exceeding the blob transport capacity. Existing native apply,
+canonical ordering, reentry and lifetime assertions remain in those suites.
+
+The public-prose include suite covers private header context and simple local
+macro includes/undef, including cross-unit isolation and unreferenced fragments.
+Its eight checks prevent used profile/ATV helpers being removed as dead code.
+
 `run_upstream_containers.ps1` executes the 320 production container codec,
 escrow, reservation, take/put, overlap wait/arming and refusal selftest checks,
 plus a slot-31 hold lifecycle. Pure decision bodies are extracted from their
