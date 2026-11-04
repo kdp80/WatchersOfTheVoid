@@ -1,3 +1,187 @@
+# Queue and coffee ownership audit (4 November 2026)
+
+Finished the previously opened 75-boundary batch for development **0.9.2164 / b2219**.
+S01-S27 are implemented in this continuation. Q01-Q12, C01-C23, W01-W06 and
+A01-A07 were already present at the merged HEAD; focused production-code fixtures
+now verify those 48 boundaries. C20 additionally needed a check after the final
+key-index callback, and the client press now retains the UFunction incarnation
+through frame reads. These are 75 completed review items, not 75 newly written fixes.
+
+Coffee state now owns bounded PRE/POST notes by invocation and exact actor/function
+incarnation. Cancelled calls without POST are reclaimed using the script gate's
+stack-lifetime query. Publication uses PublishWhile; 128 controller-owned actor/key/
+session debts retain refused records, retry at most eight per tick after 250 ms,
+and retire on replacement. A newer recursive publication cannot be cleared by an
+older result. Diagnostics retain at most 128 makers and 64 class incarnations.
+Overflow is refused; it does not evict an active publication owner.
+
+Focused verification: production queue/bucket suite, actual coffee intent/state
+controllers, real coffee/appliance wrappers and real ParamFrame pass. Eleven
+independently compiled injected faults must fail assertions; their evidence is
+build/coffee-2164/fault-controls.log. Native engine, transport and roster seams
+are doubled in the controller fixture; the wrapper fixture exercises actual field
+and call preparation code against fake reflection metadata. This does not establish
+multiplayer gameplay acceptance.
+
+PASS **134/134 current validation groups**, stable-source guard, Release/ABI
+inspection and all 1232 source entries. Evidence:
+build/coffee-2164/verification/verification.json. DLL: build/votv-coop-2164/main.dll,
+**0.9.0n b2219**, SHA-256:
+`aa15f394c379ce383d7e9ef2631f03758f6269d57ceb3e1704f5abc53e41030e`.
+Production snapshot SHA-256:
+`afc2b4c77ba7663dae4ecb43fdc31a8df5018a34817a6270361484f935069dec`.
+Fact rows, registry, peer-generation controls, GC pins, MinHook retirement,
+data paths and public-leak checks pass; reliable-kind checks cover all 254 kinds
+and reject all 18 injected faults. The separate full public-prose gate retains
+the same 14 failing counters and values as the merge qualification; its baseline
+is unchanged (build/coffee-2164/source-gates.json). The retained 2163/b2217
+release.json/archive and game installation are unchanged. HEAD remains the real
+upstream merge a3632a687; upstream-only ancestry count remains zero.
+
+Completed boundaries, individually:
+
+- [x] Q01: initialize a token bucket exactly once even when its first clock is zero.
+- [x] Q02: do not move the refill clock backwards and credit the same elapsed interval twice.
+- [x] Q03: apply a reduced burst ceiling before a same-clock spend.
+- [x] Q04: reject non-finite/negative token budgets instead of admitting a NaN stream.
+- [x] Q05: prevent recursive service of the same pending intent.
+- [x] Q06: own the served payload across occupant reset and native callbacks.
+- [x] Q07: do not pop a successor occupant's head when an old callback returns Done.
+- [x] Q08: do not refund an old Wait into the successor occupant's bucket.
+- [x] Q09: cancel service when its clock callback replaces the queued head.
+- [x] Q10: consume an uncertain callback attempt on exception, without replaying it next tick.
+- [x] Q11: release the service guard on callback/copy/clock exceptions.
+- [x] Q12: keep service admission closed through in-callback queue replacement.
+- [x] C01: reject coffee press frames with null function/locals.
+- [x] C02: bound the action parameter read by the function frame.
+- [x] C03: refuse unreadable client action frames instead of brewing locally.
+- [x] C04: cancel a client press if key lookup retires its actor.
+- [x] C05: cancel a client send after session/world retirement during key lookup.
+- [x] C06: reject non-ASCII, empty, None and oversized outgoing device keys.
+- [x] C07: reject malformed incoming device keys at the handler boundary.
+- [x] C08: require the installed, running host and a world-ready connected sender at ingress.
+- [x] C09: bind queued presses to the sender's transport generation.
+- [x] C10: clear coffee intents when the installed Session pointer changes.
+- [x] C11: clear them on same-pointer session serial changes.
+- [x] C12: clear them on world changes.
+- [x] C13: clear the coffee intent session pointer at disconnect.
+- [x] C14: clear queued presses at disconnect independently of roster teardown order.
+- [x] C15: refuse a Tick argument belonging to another session.
+- [x] C16: stop the slot drain after a callback retires the host scope.
+- [x] C17: retain the authorized device incarnation through native action preparation.
+- [x] C18: pass the same puppet body that supplied the reach verdict.
+- [x] C19: refuse a recycled puppet incarnation after reach callbacks.
+- [x] C20: refuse a rekeyed/rebound device before native action admission.
+- [x] C21: do not write old action results into successor-session counters.
+- [x] C22: do not clear a successor occupant's wait state after an old callback.
+- [x] C23: expire a press waiting indefinitely for the sender's body.
+- [x] S01: match coffee PRE/POST notes by invocation, not actor address alone.
+- [x] S02: preserve an outer brew/hit note across nested watched calls.
+- [x] S03: reject notes whose actor incarnation changed before POST.
+- [x] S04: reject notes whose UFunction incarnation changed before POST.
+- [x] S05: reject notes from an earlier installed session pointer.
+- [x] S06: reject notes from an earlier same-pointer session serial.
+- [x] S07: reject notes from an earlier world.
+- [x] S08: reject notes after a host/client role change.
+- [x] S09: retire PRE snapshots invalidated by native flag/other-actor reads.
+- [x] S10: consume a POST note before callbacks so duplicate POST cannot publish twice.
+- [x] S11: retain the bag's exact incarnation while capturing PRE amounts.
+- [x] S12: own the POST snapshot across recursive publication.
+- [x] S13: cancel publication when POST maker-flag reads retire the actor.
+- [x] S14: stop the bag branch after maker publication retires the session.
+- [x] S15: do not update new-session publication counters from an old callback.
+- [x] S16: guard the publisher's key read against actor retirement.
+- [x] S17: reject rekeyed actors during publication/retry.
+- [x] S18: keep controller authority through record capture/chunk delivery.
+- [x] S19: retain bounded retry debt for refused guarded publications.
+- [x] S20: drop retry debt whose actor/session/world ownership expired.
+- [x] S21: clear old notes and retry debt on Install context replacement.
+- [x] S22: disable coffee state callbacks immediately at disconnect.
+- [x] S23: bound cancelled-hit diagnostics and distinguish recycled maker addresses.
+- [x] S24: bound class tallies and distinguish recycled class addresses.
+- [x] S25: settle refused coffee state watch registrations once.
+- [x] S26: validate OtherActor frame bounds before reading its pointer.
+- [x] S27: bind awaited client-record admission to the current host/sender/actor scope.
+- [x] W01: guard coffee classification through class lookup and actor replacement.
+- [x] W02: invalidate hasCup offsets on class serial replacement.
+- [x] W03: invalidate hasCoffee offsets on class serial replacement.
+- [x] W04: invalidate coffeeReady offsets on class serial replacement.
+- [x] W05: cancel bag-field reads invalidated during offset resolution.
+- [x] W06: retry missing coffee bool metadata without requiring a new class address.
+- [x] A01: refuse appliance actions when the player parameter write fails.
+- [x] A02: refuse appliance actions when the action parameter write fails.
+- [x] A03: validate the appliance actor incarnation through function lookup.
+- [x] A04: validate the player incarnation through frame preparation.
+- [x] A05: validate class/function incarnations through frame preparation.
+- [x] A06: check the caller's authority immediately before native dispatch.
+- [x] A07: report caller retirement after an attempted native action without replaying it.
+
+Retain UP4 for cord/tower review and native coffee gameplay: simultaneous presses,
+bag/cup fill, join, disconnect and world replacement. No version/protocol increment,
+commit, push, release archive or game installation is part of this continuation.
+
+# Real upstream history merge (4 November 2026)
+
+The owner explicitly requested conflict reconciliation and completion of the
+actual history merge. First completed the already pending merge of fork heads
+`3475d9678` and `2131fa9cc` as `353debaff`, removing one identical duplicated
+WORK section. Then ran a normal three-way `git merge --no-commit --no-ff
+upstream/main` at `4fbf1acf0e0ec7d14350132cd3de01d6a86aa552`.
+
+Reconciliation, individually:
+
+1. Review and resolve all 80 conflicted paths against the existing source import;
+   retain nonconflicting upstream content before inspecting its automatic deltas.
+2. Preserve all 254 published fork reliable-kind entries, including 45 intentional
+   remaps of upstream names; preserve the 16-bit encoding and development b2219.
+3. Preserve 32-peer payloads, hold arbitration, local-held exclusions, throw nonce,
+   Kerfur marker, food state and placement request identities.
+4. Preserve checked container writes, escrow/reservation integration, parked
+   revision retirement, exact-recipient delivery debt and native extraction hooks.
+5. Preserve native coin admission, balance delivery retries, native glowstick
+   prelude, and actor/function/session/world lifetime guards.
+6. Retain the fork's portable cord endpoints, host admission and native Blueprint
+   scopes. Upstream's CordLinkState is the one upstream kind replaced by a fork
+   owner; adding its 19 alternative implementation/drill files would introduce
+   a parallel owner and an incompatible payload. Keep the maintained fork cord
+   implementation and its native/ownership regression suites instead.
+7. Remove eight automatic merge deltas that reintroduced duplicate declarations,
+   duplicate PublishAdmitted/AwaitsRecordFrom/capture functions, unused legacy
+   includes, an incompatible cord case, and stale container apply/seed fragments.
+8. Correct kReliableKindCount from 264 to 267, derived from ContainerActCommit.
+   IDs 264/265/266 need distinct diagnostic buckets and complete compile-time
+   kind-table coverage. A new ABI assertion fails on the old bound and passes
+   after this repair; published IDs and payload layouts are unchanged.
+9. Include the existing production queue/bucket lifetime suite in check_current.
+   This validates retained fork changes committed before the merge request.
+10. Remove the duplicate WORK section, move completed UP8 out of the unfinished
+    backlog and retain the separate UP2/UP4/UP5/UP6 semantic/gameplay reviews.
+
+All other upstream reliable-kind names are already present under their upstream
+names or the documented fork mappings. The merge changes one production line
+relative to the pre-merge fork: the kind-table bound. This is the reconciled
+result of earlier source integration, not a replacement of Git's merge strategy.
+The merge commit records the real upstream tip as its second parent.
+
+Verification is recorded under build/upstream-history-2164/verification-final.
+PASS **133/133 groups**, stable-source guard, Release/ABI/source-list inspection
+and all 1232 source entries. DLL identity: **0.9.0n b2219**. DLL SHA-256:
+`b79ae4f4ff23c405e6d634b3caa8785b7a33e67e889d4118cd529e2ead38f54f`.
+Production snapshot SHA-256:
+`7f81ae4d4ee33f58ba05594517097071d1f525b410183b3e02b7255d161596e7`.
+Fact rows (624/198 files), registry (371 plus five font roles), peer generation
+(six controls), GC pin, MinHook absence, data paths and public-leak checks pass.
+Reliable-kind routing covers all 254 kinds and rejects all 18 injected faults.
+The full public-prose gate still has 14 counters above the inherited baseline;
+its baseline is unchanged. Source census has no missing/unlisted/duplicate CPP
+entries and no conflict markers. Real native gameplay remains unverified.
+Conflict inventory, per-path hunk decisions, automatic-delta review and wire-ID
+mapping evidence are in build/upstream-history-2164. The first interrupted test
+attempt and the deliberately failing old kind-bound check are retained separately.
+The qualified 2163/b2217 package remains unchanged. The local merge records all
+436 formerly upstream-only commits as ancestors, with zero behind that tip.
+No push, package publication or game installation is part of this operation.
+
 # Git ancestry audit (4 November 2026)
 
 The owner asked why the branch still shows 436 commits behind upstream.

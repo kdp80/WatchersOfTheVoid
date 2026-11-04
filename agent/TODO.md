@@ -24,9 +24,6 @@ Only defects and unfinished implementation belong here. Technical scope is in
 - [ ] UP4: complete cord/coffee and coordinate/radio ownership review for 32 peers.
 - [ ] UP5: complete prop syncer/swinger, support, join and handoff review.
 - [ ] UP6: complete Geom Octa effects and Vulkan replacement/teardown review.
-- [ ] UP8: complete the actual upstream history merge after reconciling the
-  imported code. File-level source transfer leaves the 436 upstream commits
-  outside the branch's ancestry; it is not a completed Git synchronization.
 
 Source transfer now reaches upstream `4fbf1acf0`; these items are the remaining
 semantic review. Offline wire checks use b2219, including IDs above 255;
@@ -34,6 +31,8 @@ semantic review. Offline wire checks use b2219, including IDs above 255;
 
 Scope: [WORK.md](WORK.md#upstream-integration-in-progress). Completed conflict,
 fixture and build checks are recorded in TESTLOG; gameplay remains unverified.
+The 75 queue/coffee ownership boundaries are now individually recorded in TESTLOG;
+UP4 still owns the remaining cord/tower review and native multiplayer acceptance.
 
 The 4 November fork recheck adds three concrete follow-ups: concurrent disc
 insert ownership, host-admitted module purchases and transient spawner provenance

@@ -1,5 +1,12 @@
 # Current upstream refresh checks
 
+`run_coffee.ps1` compiles the actual coffee intent/state controllers and the
+coffee/appliance wrappers with real ParamFrame. It covers invocation nesting,
+actor/function/session/world retirement, sender generations, bounded publication
+debt and checked action writes. `-FaultControls` rejects 11 injected faults.
+Native reflection, roster and transport seams are doubled; gameplay is unverified.
+The runner and production queue/bucket suite are included in check_current.
+
 `run_local_release.ps1` compiles the production release edge and Kerfur arming
 function against the real protocol and CachedObjRef. It checks PvP nonce bytes
 independently of the native throw sequence, robot transfer/one-edge consumption,

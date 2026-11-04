@@ -1110,7 +1110,7 @@ enum class ReliableKind : uint16_t {
     ContainerActReply = 265,
     ContainerActCommit = 266,
 };
-inline constexpr size_t kReliableKindCount = 264;
+inline constexpr size_t kReliableKindCount = static_cast<size_t>(ReliableKind::ContainerActCommit) + 1;
 
 #pragma pack(push, 1)
 

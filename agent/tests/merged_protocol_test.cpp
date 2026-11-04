@@ -7,6 +7,8 @@
 #include <cstddef>
 #define CHECK(x) do{if(!(x)){std::fprintf(stderr,"FAIL %d: %s\n",__LINE__,#x);std::exit(1);}}while(0)
 using namespace coop::net;
+static_assert(kReliableKindCount == static_cast<size_t>(ReliableKind::ContainerActCommit) + 1,
+    "reliable-kind tables must cover every retained container-act ID");
 static_assert(static_cast<uint8_t>(ReliableKind::PropScaleState)==202);
 static_assert(static_cast<uint8_t>(ReliableKind::SharedScreen)==203);
 static_assert(static_cast<uint8_t>(ReliableKind::LaptopUI)==204);

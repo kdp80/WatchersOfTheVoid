@@ -26,91 +26,6 @@ This file contains implementation work and the constraints needed to finish it.
 Checks, completed-change reports and release evidence belong in
 [TESTLOG.md](TESTLOG.md).
 
-## Active queue and appliance review — 4 November 2026
-
-The next implementation batch first owns these concrete defects:
-
-- [ ] Q01: initialize a token bucket exactly once even when its first clock is zero.
-- [ ] Q02: do not move the refill clock backwards and credit the same elapsed interval twice.
-- [ ] Q03: apply a reduced burst ceiling before a same-clock spend.
-- [ ] Q04: reject non-finite/negative token budgets instead of admitting a NaN stream.
-- [ ] Q05: prevent recursive service of the same pending intent.
-- [ ] Q06: own the served payload across occupant reset and native callbacks.
-- [ ] Q07: do not pop a successor occupant's head when an old callback returns Done.
-- [ ] Q08: do not refund an old Wait into the successor occupant's bucket.
-- [ ] Q09: cancel service when its clock callback replaces the queued head.
-- [ ] Q10: consume an uncertain callback attempt on exception, without replaying it next tick.
-- [ ] Q11: release the service guard on callback/copy/clock exceptions.
-- [ ] Q12: keep service admission closed through in-callback queue replacement.
-
-The appliance part owns these individually named repairs:
-
-- [ ] C01: reject coffee press frames with null function/locals.
-- [ ] C02: bound the action parameter read by the function frame.
-- [ ] C03: refuse unreadable client action frames instead of brewing locally.
-- [ ] C04: cancel a client press if key lookup retires its actor.
-- [ ] C05: cancel a client send after session/world retirement during key lookup.
-- [ ] C06: reject non-ASCII, empty, None and oversized outgoing device keys.
-- [ ] C07: reject malformed incoming device keys at the handler boundary.
-- [ ] C08: require the installed, running host and a world-ready connected sender at ingress.
-- [ ] C09: bind queued presses to the sender's transport generation.
-- [ ] C10: clear coffee intents when the installed Session pointer changes.
-- [ ] C11: clear them on same-pointer session serial changes.
-- [ ] C12: clear them on world changes.
-- [ ] C13: clear the coffee intent session pointer at disconnect.
-- [ ] C14: clear queued presses at disconnect independently of roster teardown order.
-- [ ] C15: refuse a Tick argument belonging to another session.
-- [ ] C16: stop the slot drain after a callback retires the host scope.
-- [ ] C17: retain the authorized device incarnation through native action preparation.
-- [ ] C18: pass the same puppet body that supplied the reach verdict.
-- [ ] C19: refuse a recycled puppet incarnation after reach callbacks.
-- [ ] C20: refuse a rekeyed/rebound device before native action admission.
-- [ ] C21: do not write old action results into successor-session counters.
-- [ ] C22: do not clear a successor occupant's wait state after an old callback.
-- [ ] C23: expire a press waiting indefinitely for the sender's body.
-- [ ] S01: match coffee PRE/POST notes by invocation, not actor address alone.
-- [ ] S02: preserve an outer brew/hit note across nested watched calls.
-- [ ] S03: reject notes whose actor incarnation changed before POST.
-- [ ] S04: reject notes whose UFunction incarnation changed before POST.
-- [ ] S05: reject notes from an earlier installed session pointer.
-- [ ] S06: reject notes from an earlier same-pointer session serial.
-- [ ] S07: reject notes from an earlier world.
-- [ ] S08: reject notes after a host/client role change.
-- [ ] S09: retire PRE snapshots invalidated by native flag/other-actor reads.
-- [ ] S10: consume a POST note before callbacks so duplicate POST cannot publish twice.
-- [ ] S11: retain the bag's exact incarnation while capturing PRE amounts.
-- [ ] S12: own the POST snapshot across recursive publication.
-- [ ] S13: cancel publication when POST maker-flag reads retire the actor.
-- [ ] S14: stop the bag branch after maker publication retires the session.
-- [ ] S15: do not update new-session publication counters from an old callback.
-- [ ] S16: guard the publisher's key read against actor retirement.
-- [ ] S17: reject rekeyed actors during publication/retry.
-- [ ] S18: keep controller authority through record capture/chunk delivery.
-- [ ] S19: retain bounded retry debt for refused guarded publications.
-- [ ] S20: drop retry debt whose actor/session/world ownership expired.
-- [ ] S21: clear old notes and retry debt on Install context replacement.
-- [ ] S22: disable coffee state callbacks immediately at disconnect.
-- [ ] S23: bound cancelled-hit diagnostics and distinguish recycled maker addresses.
-- [ ] S24: bound class tallies and distinguish recycled class addresses.
-- [ ] S25: settle refused coffee state watch registrations once.
-- [ ] S26: validate OtherActor frame bounds before reading its pointer.
-- [ ] S27: bind awaited client-record admission to the current host/sender/actor scope.
-- [ ] W01: guard coffee classification through class lookup and actor replacement.
-- [ ] W02: invalidate hasCup offsets on class serial replacement.
-- [ ] W03: invalidate hasCoffee offsets on class serial replacement.
-- [ ] W04: invalidate coffeeReady offsets on class serial replacement.
-- [ ] W05: cancel bag-field reads invalidated during offset resolution.
-- [ ] W06: retry missing coffee bool metadata without requiring a new class address.
-- [ ] A01: refuse appliance actions when the player parameter write fails.
-- [ ] A02: refuse appliance actions when the action parameter write fails.
-- [ ] A03: validate the appliance actor incarnation through function lookup.
-- [ ] A04: validate the player incarnation through frame preparation.
-- [ ] A05: validate class/function incarnations through frame preparation.
-- [ ] A06: check the caller's authority immediately before native dispatch.
-- [ ] A07: report caller retirement after an attempted native action without replaying it.
-
-These 75 boundaries are queue/bucket and appliance repairs, not wire or package changes.
-
 ## Upstream integration in progress
 
 - [ ] UP2: finish semantic review of source integration through upstream
@@ -130,15 +45,11 @@ The development DLL uses b2219 and is not a newly qualified release package.
 The published fork IDs remain reserved; the renamed HitIntent keeps ID 242,
 and the new container request/reply/commit use 264/265/266. The PvP throw nonce,
 Kerfur release marker, food state and placement request IDs remain separate.
-Source transfer does not add upstream ancestry to Git; no commit was requested.
-
-- [ ] UP8: finish actual upstream history integration. At `2131fa9cc`, the latest
-  fork merge has parents `6604633bf` and `f9ad5ef9c`, neither the upstream tip.
-  The last common ancestor remains `ad5315611`; Git reports 632 fork-only and
-  436 upstream-only commits. A real merge preview against `4fbf1acf0` conflicts
-  in 80 paths. Reconcile those changes with the existing fork adaptations and
-  record the upstream parent through a genuine merge; do not clear the count
-  by declaring unreviewed upstream changes already merged.
+UP8 history integration is recorded in TESTLOG under the real upstream merge.
+It resolves the 436-commit ancestry gap; the semantic/gameplay reviews above
+remain open independently of Git ancestry.
+The completed 75 queue/coffee boundaries are listed in TESTLOG's queue and coffee
+audit. UP4 still owns cord/tower implementation review and native coffee gameplay.
 
 ## Fork follow-ups — reviewed 4 November 2026
 
