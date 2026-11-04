@@ -29,7 +29,6 @@
 #include "coop/props/trash_channel.h"   // CtxForEid, the trash sync-time context
 #include "coop/props/prop_drive_host.h"  // a hand's let-go coasts on the host until the body rests
 #include "coop/props/prop_element_tracker.h"
-#include "coop/props/prop_drive_host.h"    // Coast: the host's own throw streams to rest
 #include "coop/props/prop_syncer.h"        // Claim: a dragged swinger's parent prop
 #include "coop/props/prop_throw.h"        // ThrowSeqFor: a release of a prop the game's throw launched
 #include "coop/props/prop_wire_parity.h"  // PhysFlagsOf, the flags a release carries
@@ -51,7 +50,6 @@
 #include <chrono>
 #include <cmath>
 #include <algorithm>
-#include <chrono>
 #include <cstdint>
 #include <string>
 
@@ -91,7 +89,7 @@ int  g_relEdgeLoggedSkip = -1;  // -1 = nothing reported yet, else the last relS
 coop::element::ElementId g_gapLoggedEid = coop::element::kInvalidId;
 // The actor HandTaken, or the host's take release, named. The release edge consumes it so that
 // one let-go carries the host's decision. A later grab is a different edge and is not armed.
-void* g_kerfurTakeActor = nullptr;
+ue_wrap::CachedObjRef g_kerfurTakeActor;
 
 // The local player's pose, on the game thread at the send rate.
 bool ReadLocalPose(void* local, void* controller, coop::net::PoseSnapshot& out) {
@@ -304,6 +302,10 @@ bool CoastSwinger(coop::net::Session& session) {
 // its channel) and the edge state clears. The release edge sends it, and so does a grab of another item while a
 // swinger still coasts, so a coasting lid's release goes out once either way.
 void SendHeldRelease(coop::net::Session& session) {
+    const bool kerfurTaken = g_lastHeldProp.Alive() &&
+        (g_kerfurTakeActor.Get() == g_lastHeldProp.Raw() ||
+         coop::npc_sync::KerfurIsHolding(g_lastHeldProp.Raw()));
+    g_kerfurTakeActor.Reset();
     // The release edge (not carrying: the latch closed, or this is a non-trash prop). The
     // stream stops and a PropRelease goes out with the body's current velocity: the BP has
     // cleared grabbing_actor, released the handle and applied any impulse, and PhysX has not
@@ -355,7 +357,9 @@ void SendHeldRelease(coop::net::Session& session) {
         rel.elementId = relEid;  // a keyless clump is routed by eid (key None cannot disambiguate)
         rel.holdGen = g_holdGen;
         // The game's own throw ran on this copy (prop_throw): the release says so, and every receiver plays the throw.
-        if (g_lastHeldProp.Alive()) rel.throwSeq = throwSeq = coop::prop_throw::ThrowSeqFor(g_lastHeldProp.Raw());
+        if (!kerfurTaken && g_lastHeldProp.Alive())
+            rel.throwSeq = throwSeq = coop::prop_throw::ThrowSeqFor(g_lastHeldProp.Raw());
+        rel._pad = kerfurTaken ? 1 : 0;
         if (g_lastHeldProp.Alive()) {
             rel.physFlags = coop::prop_wire_parity::PhysFlagsOf(g_lastHeldProp.Raw());
             // Where the hold let go, so a receiver whose last poses were lost lets go from here;
@@ -367,6 +371,16 @@ void SendHeldRelease(coop::net::Session& session) {
                 rel.locX = loc.X; rel.locY = loc.Y; rel.locZ = loc.Z;
                 rel.rotPitch = rot.Pitch; rel.rotYaw = rot.Yaw; rel.rotRoll = rot.Roll;
                 rel.hasPose = 1;
+            }
+        }
+        if (!kerfurTaken && vel.ok && std::isfinite(linMagSq) && linMagSq > 150.f * 150.f &&
+            g_lastHeldProp.Alive()) {
+            const uint8_t slot = coop::players::Registry::Get().LocalPeerId();
+            if (slot < coop::players::kMaxPeers) {
+                const uint16_t nonce = coop::pvp::MintThrowNonce();
+                rel.throwNonce[0] = static_cast<uint8_t>(nonce & 0xff);
+                rel.throwNonce[1] = static_cast<uint8_t>(nonce >> 8);
+                coop::pvp::NoteThrow(g_lastHeldProp.Raw(), slot, nonce);
             }
         }
         session.SendPropRelease(rel);
@@ -412,7 +426,7 @@ uint16_t CurrentHoldGen() { return g_holdGen; }
 void ArmKerfurTakeRelease(void* actor) {
     // The release edge runs on a later tick than the message that armed it. Keeping the actor
     // (not a flag on "whatever is held") means a different item let go in between stays a throw.
-    if (actor) g_kerfurTakeActor = actor;
+    if (actor) g_kerfurTakeActor.Set(actor);
 }
 
 void* LastHeldActor() {
@@ -441,7 +455,7 @@ void OnSessionStart() {
     g_relEdgeLoggedEid = coop::element::kInvalidId;
     g_relEdgeLoggedSkip = -1;
     g_gapLoggedEid = coop::element::kInvalidId;
-    g_kerfurTakeActor = nullptr;
+    g_kerfurTakeActor.Reset();
 }
 
 void Tick(coop::net::Session& session, void* local, void* controller) {

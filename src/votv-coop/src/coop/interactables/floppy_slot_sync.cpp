@@ -48,11 +48,9 @@ constexpr uint64_t kSweepMs = 50;
 // serverbox_sync's, for the same reason -- one lane must not address a box the other cannot.
 constexpr size_t kMaxDevices = 64;
 
-// One slot body's ceiling. The measure that set it is the record lane's: a real disc record
-// measured 11.3 KB, and an 8 KB guess refused it inside one run. A body past this is a claim we
-// refuse and a canonical we cannot send, both loudly -- truncating instead would hand the game a
-// JSON its own stringToSaveData cannot parse, which is worse than not sending.
-constexpr size_t kMaxSlotBytes = 32 * 1024;
+// A full disc of server requests is about 50 KiB. Reserve room for either outer header when
+// packing one slot; larger sets still split into independently bounded canonical blobs.
+constexpr size_t kMaxSlotBytes = coop::blob_chunks::MaxBlobBytes() - 64;
 
 // A client's claim is unbounded input. The window is generous next to the 1 Hz poll that
 // produces one, so a peer playing normally never reaches it.
@@ -721,9 +719,9 @@ void OnChunk(const coop::net::BlobChunkPayload& p, uint8_t senderSlot) {
         }
         std::vector<void*> devices;
         const size_t n = ReadDevices(kind, devices);
-        if (blob.size() > kMaxSlotBytes) {
+        if (blob.size() > coop::blob_chunks::MaxBlobBytes()) {
             UE_LOGW("floppy_slot_sync: claim from slot %u is %zu B, past the %zu B ceiling -- "
-                    "dropped", static_cast<unsigned>(senderSlot), blob.size(), kMaxSlotBytes);
+                    "dropped", static_cast<unsigned>(senderSlot), blob.size(), coop::blob_chunks::MaxBlobBytes());
             return;
         }
         bool warnNow = false;
