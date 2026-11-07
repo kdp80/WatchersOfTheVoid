@@ -743,7 +743,7 @@ void TickGameplay(coop::net::Session& session, bool isConnected, bool isHost,
                   bool fleeing) {
     namespace PP = coop::dev::perf_probe;
 
-    // ОПТИМИЗАЦИЯ КЛИЕНТА: счетчик тиков для распределения нагрузки
+
     static uint32_t s_clientTickCounter = 0;
     ++s_clientTickCounter;
     // Per-tick drains for subsystems that retry until the reliable channel accepts a queued
@@ -778,7 +778,7 @@ void TickGameplay(coop::net::Session& session, bool isConnected, bool isHost,
     { PP::Scope _s{PP::Bucket::Interactable}; ue_wrap::ScopedWalkTimer _w{"sync:cargo_lift_sync"}; coop::cargo_lift_sync::Tick(); }
     { PP::Scope _s{PP::Bucket::Interactable}; ue_wrap::ScopedWalkTimer _w{"sync:prop_fire_sync"}; coop::prop_fire_sync::Tick(); }
     { PP::Scope _s{PP::Bucket::Interactable}; ue_wrap::ScopedWalkTimer _w{"sync:hand_fire_sync"}; coop::hand_fire_sync::Tick(); }
-// Тикаем игрушки, звуки и мелочи не каждый кадр, а пачками в разные кадры:
+
     if ((s_clientTickCounter % 4) == 0) {
         coop::dingus_music_sync::Tick();
         coop::llama_sync::Tick();
