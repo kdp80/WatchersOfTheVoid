@@ -742,6 +742,10 @@ DisconnectStats DisconnectAll() {
 void TickGameplay(coop::net::Session& session, bool isConnected, bool isHost,
                   bool fleeing) {
     namespace PP = coop::dev::perf_probe;
+
+    // ОПТИМИЗАЦИЯ КЛИЕНТА: счетчик тиков для распределения нагрузки
+    static uint32_t s_clientTickCounter = 0;
+    ++s_clientTickCounter;
     // Per-tick drains for subsystems that retry until the reliable channel accepts a queued
     // connect-time broadcast, and apply per-peer payloads that arrived before the puppet spawned.
     // A cheap early return when nothing is pending.
@@ -774,18 +778,24 @@ void TickGameplay(coop::net::Session& session, bool isConnected, bool isHost,
     { PP::Scope _s{PP::Bucket::Interactable}; ue_wrap::ScopedWalkTimer _w{"sync:cargo_lift_sync"}; coop::cargo_lift_sync::Tick(); }
     { PP::Scope _s{PP::Bucket::Interactable}; ue_wrap::ScopedWalkTimer _w{"sync:prop_fire_sync"}; coop::prop_fire_sync::Tick(); }
     { PP::Scope _s{PP::Bucket::Interactable}; ue_wrap::ScopedWalkTimer _w{"sync:hand_fire_sync"}; coop::hand_fire_sync::Tick(); }
-    coop::hand_extinguisher_sync::Tick();
-    coop::hand_toy_audio::Tick();
-    coop::desk_short_circuit_sync::Tick();
-    coop::madness_sync::Tick();
-    coop::dingus_music_sync::Tick();
-    coop::llama_sync::Tick();
-    coop::watoy_sync::Tick();
-    coop::sponge_effects_sync::Tick();
-    coop::water_pour_sync::Tick();
-    coop::grayboar_actions::Tick();
-    coop::grayboar_turn::Tick();
-    coop::kavotia_sync::Tick();
+// Тикаем игрушки, звуки и мелочи не каждый кадр, а пачками в разные кадры:
+    if ((s_clientTickCounter % 4) == 0) {
+        coop::dingus_music_sync::Tick();
+        coop::llama_sync::Tick();
+        coop::watoy_sync::Tick();
+        coop::hand_toy_audio::Tick();
+    } else if ((s_clientTickCounter % 4) == 1) {
+        coop::sponge_effects_sync::Tick();
+        coop::water_pour_sync::Tick();
+        coop::hand_extinguisher_sync::Tick();
+    } else if ((s_clientTickCounter % 4) == 2) {
+        coop::desk_short_circuit_sync::Tick();
+        coop::madness_sync::Tick();
+    } else {
+        coop::grayboar_actions::Tick();
+        coop::grayboar_turn::Tick();
+        coop::kavotia_sync::Tick();
+    }
     { PP::Scope _s{PP::Bucket::Interactable}; ue_wrap::ScopedWalkTimer _w{"sync:cord_sync"}; coop::cord_sync::Tick(); }
     { PP::Scope _s{PP::Bucket::Interactable}; ue_wrap::ScopedWalkTimer _w{"sync:prop_support_sync"}; coop::prop_support_sync::Tick(session); }
     { PP::Scope _s{PP::Bucket::Interactable}; ue_wrap::ScopedWalkTimer _w{"sync:gravity_motion"}; coop::gravity_motion::Tick(session); }
@@ -852,8 +862,12 @@ void TickGameplay(coop::net::Session& session, bool isConnected, bool isHost,
     { PP::Scope _s{PP::Bucket::Interactable}; ue_wrap::ScopedWalkTimer _w{"sync:coingun"}; coop::coingun_sync::Tick(); }
     { PP::Scope _s{PP::Bucket::Interactable}; ue_wrap::ScopedWalkTimer _w{"sync:window"}; coop::window_sync::Tick(); }  // base-window clean: deferred-apply retry (wipes go at the verb)
     { PP::Scope _s{PP::Bucket::Interactable}; ue_wrap::ScopedWalkTimer _w{"sync:window_stroke"}; coop::window_stroke_sync::Tick(); }  // bay-window dabs: send observed, replay received
-    coop::drink_spill_sync::Tick();
-    coop::blood_sync::Tick();
+     if ((s_clientTickCounter % 8) == 0) {
+        coop::drink_spill_sync::Tick();
+        coop::blood_sync::Tick();
+        PP::Scope _s{PP::Bucket::Interactable};
+        coop::grime_sync::Tick();
+    }
     { PP::Scope _s{PP::Bucket::Interactable}; ue_wrap::ScopedWalkTimer _w{"sync:grime"}; coop::grime_sync::Tick(); }  // surface grime: the lowering verbs' watches + the end-of-play subscription, until they take
     { PP::Scope _s{PP::Bucket::Interactable}; ue_wrap::ScopedWalkTimer _w{"sync:movement_ledger"}; coop::movement_ledger::Tick(session); }  // HOST: throttled per-slot summary + the wire-vs-actor divergence sample (an ENGINE read, hence game thread)
     { PP::Scope _s{PP::Bucket::Interactable}; ue_wrap::ScopedWalkTimer _w{"sync:npc_host"}; coop::npc_sync::TickPoseStream(); }  // HOST: read NPCs -> publish EntityPose batch (host-only, no-op on client)
