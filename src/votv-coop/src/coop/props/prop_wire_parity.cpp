@@ -83,25 +83,20 @@ void ConvergeFrozenSleep(void* actor, uint8_t physFlags) {
     if (!(physFlags & pf::kLiveState) || !actor || !ue_wrap::prop::IsDescendantOfProp(actor)) return;
     const bool wantFrozen = (physFlags & pf::kFrozen) != 0;
     const bool wantSleep  = (physFlags & pf::kSleep) != 0;
-    const bool hostSimulating = (physFlags & pf::kSimulatePhysics) != 0;
     const bool isFrozen = ue_wrap::prop::IsFrozen(actor);
     const bool isSleep  = ue_wrap::prop::IsSleeping(actor);
     if (isFrozen == wantFrozen && isSleep == wantSleep) return;
-    
     const bool ok = (!wantFrozen && !wantSleep)
-        ? (hostSimulating ? ue_wrap::prop::CallAwakeUnfreeze(actor) : true)
+        ? ue_wrap::prop::CallAwakeUnfreeze(actor)
         : ue_wrap::prop::CallBaseSetPropProps(actor, ue_wrap::prop::IsStatic(actor), wantFrozen, wantSleep);
     if (!ok) {
         UE_LOGW("prop_wire_parity: %p frozen=%d sleep=%d -> want frozen=%d sleep=%d",
                 actor, isFrozen ? 1 : 0, isSleep ? 1 : 0, wantFrozen ? 1 : 0, wantSleep ? 1 : 0);
     }
 }
-
 bool SpParitySimulate(uint8_t physFlags) {
     namespace pf = coop::net::propspawn_flags;
-    if (physFlags & (pf::kStatic | pf::kFrozen | pf::kSleep)) return false;
-    if ((physFlags & pf::kLiveState) && !(physFlags & pf::kSimulatePhysics)) return false;
-    return true;
+    return (physFlags & (pf::kStatic | pf::kFrozen | pf::kSleep)) == 0;
 }
 void RestoreSpParityPhysicsAfterConverge(void* actor, uint8_t physFlags) {
     if (!actor || !R::IsLive(actor)) return;

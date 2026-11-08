@@ -112,17 +112,22 @@ Kind Type(void* actor) {
 void* Door(void* actor) {
     const Kind k = Type(actor);
     if (k != Kind::Microwave && k != Kind::MiniOven && k != Kind::Cremator) return nullptr;
+    if (k == Kind::Cremator) {
+        static CachedObjRef crematorDoorCls;
+        if (!crematorDoorCls.Get()) crematorDoorCls.Set(object_index::ClassByName(L"prop_swinger_crematorDoor_C"));
+        if (void* cls = crematorDoorCls.Get()) {
+            const int32_t n = R::NumObjects();
+            for (int32_t i = 0; i < n; ++i) {
+                void* obj = R::ObjectAt(i);
+                if (obj && R::ClassOf(obj) == cls && R::IsLive(obj) && !R::NameStartsWith(R::NameOf(obj), L"Default__"))
+                    return obj;
+            }
+        }
+    }
     auto& l = Fields(k);
     void* comp = Object(l.door, actor);
     if (!comp) comp = Object(l.doorObj, actor);
-    static Field crematorDoorField{L"crematorDoor"};
-    if (!comp) comp = Object(crematorDoorField, actor);
-    if (comp) {
-        void* child = Object(l.child, comp);
-        if (child) return child;
-        if (swinger::EnsureResolved() && swinger::IsSwinger(comp)) return comp;
-    }
-    return nullptr;
+    return comp ? Object(l.child, comp) : nullptr;
 }
 void* DoorParent(void* child) {
     // Called from the global swing verb: do not dispatch another Blueprint here.
@@ -183,9 +188,15 @@ bool ApplyDoorPose(void* actor,const FTransform& pose) {
     return f.valid() && f.Set<FTransform>(L"NewTransform",world) && f.Set<bool>(L"bTeleport",true) && Call(mesh,f);
 }
 void* DoorUser(void* actor) {
-    void* child=Door(actor);
+    void* child = Door(actor);
+    if (!child) return nullptr;
+    void* localPlayer = engine::GetFirstLocalPlayerController();
+    if (localPlayer) {
+        void* localPawn = engine::GetPlayerPawn(localPlayer);
+        if (localPawn && engine::IsMainPlayerGrabbing(localPawn, child)) return localPawn;
+    }
     static Field user{L"player"};
-    return child ? Object(user,child) : nullptr;
+    return Object(user, child);
 }
 bool MoveDoor(void* actor,void* player,const FVector2D& mouse) {
     void* child=Door(actor);
