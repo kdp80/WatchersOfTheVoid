@@ -112,8 +112,16 @@ void* Door(void* actor) {
     const Kind k = Type(actor);
     if (k != Kind::Microwave && k != Kind::MiniOven && k != Kind::Cremator) return nullptr;
     auto& l = Fields(k);
-    void* comp = Object(l.door,actor);
-    return comp ? Object(l.child,comp) : nullptr;
+    void* comp = Object(l.door, actor);
+    if (!comp) comp = Object(l.doorObj, actor);
+    static Field crematorDoorField{L"crematorDoor"};
+    if (!comp) comp = Object(crematorDoorField, actor);
+    if (comp) {
+        void* child = Object(l.child, comp);
+        if (child) return child;
+        if (swinger::EnsureResolved() && swinger::IsSwinger(comp)) return comp;
+    }
+    return nullptr;
 }
 void* DoorParent(void* child) {
     // Called from the global swing verb: do not dispatch another Blueprint here.
@@ -204,6 +212,7 @@ bool Read(void* actor, State& out) {
         if (opened) s.flags|=Opened;
         s.hasDoorPose=ReadDoorPose(actor,s.doorPose);
         if (!s.hasDoorPose) return false;
+        ue_wrap::cremator::TryReadFuel(actor, s.remaining);
         out=s; return true;
     }
     bool ok = true;
@@ -245,8 +254,8 @@ bool Apply(void* actor, const State& s,const std::function<bool()>& current) {
     CachedObjRef live;live.Set(actor);const auto world=world_identity::Generation();
     const auto valid=[&]{return live.Get() && world==world_identity::Generation() && (!current || current());};
     if(s.kind==Kind::Grill)return grill::Apply(actor,{bool(s.flags&Active),bool(s.flags&HasLid),s.cooking,s.coals,s.burn,s.cookVolume},current);
-    if (s.kind==Kind::Cremator) {
-        // Door paint only; lever/burning state has its own authoritative lane.
+if (s.kind==Kind::Cremator) {
+        ue_wrap::cremator::TryWriteFuel(actor, s.remaining);
         return SetDoor(actor,(s.flags&Opened)!=0) && valid() && s.hasDoorPose && ApplyDoorPose(actor,s.doorPose) && valid();
     }
     auto& l = Fields(s.kind);

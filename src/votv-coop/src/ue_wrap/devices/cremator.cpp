@@ -96,6 +96,42 @@ bool TryReadLeverActive(void* actor, bool& active) {
     return IsCremator(actor) && ReadBool(actor, L"isActive", active);
 }
 
+namespace {
+int32_t FloatOffset(void* actor, const wchar_t* name) {
+    void* cls = actor ? R::ClassOf(actor) : nullptr;
+    return cls ? R::FindPropertyOffset(cls, name) : -1;
+}
+bool ReadFloat(void* actor, const wchar_t* name, float& out) {
+    const int32_t off = FloatOffset(actor, name);
+    if (off < 0) return false;
+    std::memcpy(&out, reinterpret_cast<const uint8_t*>(actor) + off, sizeof(out));
+    return true;
+}
+bool WriteFloat(void* actor, const wchar_t* name, float val) {
+    const int32_t off = FloatOffset(actor, name);
+    if (off < 0) return false;
+    std::memcpy(reinterpret_cast<uint8_t*>(actor) + off, &val, sizeof(val));
+    return true;
+}
+}
+
+bool TryReadFuel(void* actor, float& outFuel) {
+    if (!IsCremator(actor)) return false;
+    const wchar_t* names[] = { L"fuel", L"Fuel", L"fuelAmount", L"fuel_amount", L"currentFuel" };
+    for (const wchar_t* n : names) {
+        if (ReadFloat(actor, n, outFuel)) return true;
+    }
+    return false;
+}
+
+bool TryWriteFuel(void* actor, float fuel) {
+    if (!IsCremator(actor)) return false;
+    const wchar_t* names[] = { L"fuel", L"Fuel", L"fuelAmount", L"fuel_amount", L"currentFuel" };
+    for (const wchar_t* n : names) {
+        if (WriteFloat(actor, n, fuel)) return true;
+    }
+    return false;
+}
 
 bool CallUseLever(void* actor) {
     if (!IsCremator(actor)) return false;

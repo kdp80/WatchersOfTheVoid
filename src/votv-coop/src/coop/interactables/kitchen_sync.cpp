@@ -157,7 +157,7 @@ bool Valid(const net::KitchenStatePayload& p) {
         !std::isfinite(p.burn)||p.burn<0||p.burn>=1.01f))return false;
     return kitchen_wire::ValidPose(p) && p.key.len<=sizeof(p.key.data) && (p.key.len || p.elementId) && p.kind>=1 && p.kind<=6 &&
         p.mode>=0 && p.mode<=4 && std::isfinite(p.remaining) &&
-        std::isfinite(p.timer) && std::isfinite(p.power) && p.remaining>=0 && p.remaining<=60 &&
+        std::isfinite(p.timer) && std::isfinite(p.power) && p.remaining>=0 && (p.kind==6 || p.remaining<=60) &&
         p.timer>=0 && p.timer<=60 && p.power>=0 && p.power<=1.01f;
 }
 K::State Decode(const net::KitchenStatePayload& p) {
@@ -483,6 +483,7 @@ void Install(net::Session* session) {
     sg::WatchName(L"Open",0x4B540006,&OnDoor,nullptr);
     sg::WatchName(L"Close",0x4B540007,&OnDoor,nullptr);
     sg::WatchClassName(L"prop_swinger_C",L"mouseAssign",0x4B540008,&OnMouse,nullptr);
+sg::WatchClassName(L"prop_swinger_crematorDoor_C",L"mouseAssign",0x4B540008,&OnMouse,nullptr);
     sg::WatchClassName(L"prop_bbq_C",L"ReceiveTick",0x4B540009,&OnProducer,nullptr);
     sg::WatchClassName(L"prop_bbq_C",L"attemptIgnite",0x4B54000A,&OnGrillIgnite,&AfterGrillChange);
     sg::WatchClassName(L"prop_bbq_C",L"addCoal",0x4B54000B,&OnGrillCoal,&AfterGrillChange);

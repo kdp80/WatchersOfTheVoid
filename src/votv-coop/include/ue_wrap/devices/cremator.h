@@ -16,4 +16,6 @@ bool TryReadLeverActive(void* actor, bool& active);
 bool CallUseLever(void* actor);
 std::wstring LeverWireKey(void* actor);
 void* FindByLeverWireKey(const std::wstring& key);
+bool TryReadFuel(void* actor, float& outFuel);
+bool TryWriteFuel(void* actor, float fuel);
 }
