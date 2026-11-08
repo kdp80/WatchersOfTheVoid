@@ -1,4 +1,5 @@
 #include "ue_wrap/devices/kitchen_machine.h"
+#include "ue_wrap/devices/cremator.h"
 #include "ue_wrap/devices/grill.h"
 #include "ue_wrap/actors/swinger.h"
 #include "ue_wrap/actors/prop.h"
