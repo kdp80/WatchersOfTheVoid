@@ -87,9 +87,17 @@ bool Held(void* actor) {
     return local_prop_hold::IsHeld(actor) || remote_prop::IsActorUnderAnyDrive(actor);
 }
 
-// A frozen or static prop keeps its physics off whatever the stream did: it is moved kinematically
-// and left so, the stuck wall-attachable rule the held-prop receiver applies.
-bool PhysicsStaysOff(void* actor) { return PR::IsFrozen(actor) || PR::IsStatic(actor); }
+bool PhysicsStaysOff(void* actor) {
+    if (!actor) return false;
+    if (PR::IsFrozen(actor) || PR::IsStatic(actor)) return true;
+   
+    if (void* cls = R::ClassOf(actor)) {
+        if (const wchar_t* name = R::NameOf(cls)) {
+            if (std::wcsstr(name, L"workbench")) return true;
+        }
+    }
+    return false;
+}
 
 // By eid first -- the registry's O(1) row, which a joiner's keyed copy carries from the bind --
 // then the key INDEX; never the cold object-array walk the general key resolver falls back to.
@@ -175,10 +183,16 @@ void ApplyEnd(void* actor, const coop::net::PropDriveEndPayload& p, bool parkedH
         coop::prop_wire_parity::RestoreSpParityPhysicsAfterConverge(actor, p.physFlags);
         const float lin2 = p.linVelX * p.linVelX + p.linVelY * p.linVelY + p.linVelZ * p.linVelZ;
         const float ang2 = p.angVelX * p.angVelX + p.angVelY * p.angVelY + p.angVelZ * p.angVelZ;
-        if (parkedHere && coop::prop_wire_parity::SpParitySimulate(p.physFlags) && (lin2 > 0.f || ang2 > 0.f)) {
-            void* mesh = PR::GetStaticMesh(actor);
-            ue_wrap::engine::SetComponentLinearVelocity(mesh, p.linVelX, p.linVelY, p.linVelZ);
-            ue_wrap::engine::SetComponentAngularVelocity(mesh, p.angVelX, p.angVelY, p.angVelZ);
+        void* mesh = PR::GetStaticMesh(actor);
+        if (mesh && parkedHere && coop::prop_wire_parity::SpParitySimulate(p.physFlags)) {
+            if (lin2 > 0.f || ang2 > 0.f) {
+                ue_wrap::engine::SetComponentLinearVelocity(mesh, p.linVelX, p.linVelY, p.linVelZ);
+                ue_wrap::engine::SetComponentAngularVelocity(mesh, p.angVelX, p.angVelY, p.angVelZ);
+            } else {
+               
+                ue_wrap::engine::SetComponentLinearVelocity(mesh, 0.f, 0.f, 0.f);
+                ue_wrap::engine::SetComponentAngularVelocity(mesh, 0.f, 0.f, 0.f);
+            }
         }
     }
     // The park is over, whatever the flags left the body: a Character it stopped moves again.
