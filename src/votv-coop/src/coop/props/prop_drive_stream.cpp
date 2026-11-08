@@ -90,11 +90,9 @@ bool Held(void* actor) {
 bool PhysicsStaysOff(void* actor) {
     if (!actor) return false;
     if (PR::IsFrozen(actor) || PR::IsStatic(actor)) return true;
-   
     if (void* cls = R::ClassOf(actor)) {
-        if (const wchar_t* name = R::NameOf(cls)) {
-            if (std::wcsstr(name, L"workbench")) return true;
-        }
+        const std::wstring name = R::ToString(R::NameOf(cls));
+        if (name.find(L"workbench") != std::wstring::npos) return true;
     }
     return false;
 }
