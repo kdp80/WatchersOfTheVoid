@@ -129,7 +129,7 @@ void* Door(void* actor) {
     if (!comp) comp = Object(l.doorObj, actor);
     return comp ? Object(l.child, comp) : nullptr;
 }
-C++
+
 void* DoorParent(void* child) {
     if (!child || !swinger::EnsureResolved() || !swinger::IsSwinger(child)) return nullptr;
     void* a = engine::ParentActorOf(child);
@@ -138,60 +138,58 @@ void* DoorParent(void* child) {
     if (!cremators.empty() && Door(cremators[0]) == child) return cremators[0];
     return nullptr;
 }
+
 bool OwnsDoor(void* actor) {
     return Door(actor) != nullptr;
 }
-bool OwnsDoor(void* actor) {
-    // Child actors can have locally minted keys. Only the parent's identity is shared.
-    return Door(actor)!=nullptr;
-}
+
 bool SetDoor(void* actor, bool opened) {
     void* d = Door(actor);
     if (!d || !swinger::EnsureResolved() || !swinger::IsSwinger(d)) return false;
     bool current = false;
-    if (!swinger::TryReadOpen(d,current)) return false;
-    // Open/Close change a constraint's target, not the mesh transform. A kinematic
-    // child plays the sound and changes `opened` but its door never actually moves.
+    if (!swinger::TryReadOpen(d, current)) return false;
     void* mesh = prop::GetStaticMesh(d);
     if (mesh && !prop::IsFrozen(d) && !engine::IsComponentSimulatingPhysics(mesh))
-        engine::SetComponentSimulatePhysics(mesh,true);
-    if (current==opened) return true;
-    return opened ? swinger::CallOpen(d,false) : swinger::CallClose(d);
+        engine::SetComponentSimulatePhysics(mesh, true);
+    if (current == opened) return true;
+    return opened ? swinger::CallOpen(d, false) : swinger::CallClose(d);
 }
+
 namespace {
-bool TransformOf(void* object,const wchar_t* verb,FTransform& out) {
+bool TransformOf(void* object, const wchar_t* verb, FTransform& out) {
     if (!object) return false;
-    ParamFrame f(R::FindDispatchFunctionCached(R::ClassOf(object),verb));
-    return f.valid() && Call(object,f) && f.GetRaw(L"ReturnValue",&out,sizeof(out));
+    ParamFrame f(R::FindDispatchFunctionCached(R::ClassOf(object), verb));
+    return f.valid() && Call(object, f) && f.GetRaw(L"ReturnValue", &out, sizeof(out));
 }
-bool TransformMath(const wchar_t* verb,const wchar_t* secondName,const FTransform& a,const FTransform& b,FTransform& out) {
+bool TransformMath(const wchar_t* verb, const wchar_t* secondName, const FTransform& a, const FTransform& b, FTransform& out) {
     static CachedObjRef cdo;
-    void* object=cdo.Get();
-    if (!object) { object=R::FindClassDefaultObject(L"KismetMathLibrary"); if (object) cdo.Set(object); }
+    void* object = cdo.Get();
+    if (!object) { object = R::FindClassDefaultObject(L"KismetMathLibrary"); if (object) cdo.Set(object); }
     if (!object) return false;
-    ParamFrame f(R::FindDispatchFunctionCached(R::ClassOf(object),verb));
-    return f.valid() && f.Set<FTransform>(L"A",a) && f.Set<FTransform>(secondName,b) &&
-        Call(object,f) && f.GetRaw(L"ReturnValue",&out,sizeof(out));
+    ParamFrame f(R::FindDispatchFunctionCached(R::ClassOf(object), verb));
+    return f.valid() && f.Set<FTransform>(L"A", a) && f.Set<FTransform>(secondName, b) &&
+        Call(object, f) && f.GetRaw(L"ReturnValue", &out, sizeof(out));
 }
 }
-bool ReadDoorPose(void* actor,FTransform& out) {
-    void* child=Door(actor);
-    void* mesh=child ? prop::GetStaticMesh(child) : nullptr;
-    FTransform door{},parent{};
-    return TransformOf(mesh,L"K2_GetComponentToWorld",door) && TransformOf(actor,L"GetTransform",parent) &&
-        TransformMath(L"MakeRelativeTransform",L"RelativeTo",door,parent,out);
+
+bool ReadDoorPose(void* actor, FTransform& out) {
+    void* child = Door(actor);
+    void* mesh = child ? prop::GetStaticMesh(child) : nullptr;
+    FTransform door{}, parent{};
+    return TransformOf(mesh, L"K2_GetComponentToWorld", door) && TransformOf(actor, L"GetTransform", parent) &&
+        TransformMath(L"MakeRelativeTransform", L"RelativeTo", door, parent, out);
 }
-bool ApplyDoorPose(void* actor,const FTransform& pose) {
-    void* child=Door(actor);
-    void* mesh=child ? prop::GetStaticMesh(child) : nullptr;
+
+bool ApplyDoorPose(void* actor, const FTransform& pose) {
+    void* child = Door(actor);
+    void* mesh = child ? prop::GetStaticMesh(child) : nullptr;
     if (!mesh) return false;
-    FTransform parent{},world{};
-    if (!TransformOf(actor,L"GetTransform",parent) || !TransformMath(L"ComposeTransforms",L"B",pose,parent,world)) return false;
-    ParamFrame f(R::FindDispatchFunctionCached(R::ClassOf(mesh),L"K2_SetWorldTransform"));
-    // Keep the native hinge intact. Teleport the rigid body, never sweep its old
-    // closed position through an item another peer is inserting into the oven.
-    return f.valid() && f.Set<FTransform>(L"NewTransform",world) && f.Set<bool>(L"bTeleport",true) && Call(mesh,f);
+    FTransform parent{}, world{};
+    if (!TransformOf(actor, L"GetTransform", parent) || !TransformMath(L"ComposeTransforms", L"B", pose, parent, world)) return false;
+    ParamFrame f(R::FindDispatchFunctionCached(R::ClassOf(mesh), L"K2_SetWorldTransform"));
+    return f.valid() && f.Set<FTransform>(L"NewTransform", world) && f.Set<bool>(L"bTeleport", true) && Call(mesh, f);
 }
+
 void* DoorUser(void* actor) {
     void* child = Door(actor);
     static Field user{L"player"};
