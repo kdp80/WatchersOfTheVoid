@@ -470,6 +470,7 @@ sg::Verdict OnMouse(const sg::Call& c) {
     if (K::Type(parent) == K::Kind::Cremator) return sg::Verdict::Run;
     return sg::Verdict::Cancel;
 }
+}
 
 void Install(net::Session* session) {
     if(g_session.load()!=session)OnDisconnect();
