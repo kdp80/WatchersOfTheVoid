@@ -467,6 +467,10 @@ sg::Verdict OnMouse(const sg::Call& c) {
     auto& motion=g_motion[id]; motion.actor.Set(parent);
     motion.x=std::clamp(motion.x+delta.X,-200.f,200.f);
     motion.y=std::clamp(motion.y+delta.Y,-200.f,200.f);
+    auto& motion=g_motion[id]; motion.actor.Set(parent);
+    motion.x=std::clamp(motion.x+delta.X,-200.f,200.f);
+    motion.y=std::clamp(motion.y+delta.Y,-200.f,200.f);
+    if (K::Type(parent) == K::Kind::Cremator) return sg::Verdict::Run;
     return sg::Verdict::Cancel;
 }
 }

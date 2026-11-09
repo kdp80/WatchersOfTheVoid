@@ -113,14 +113,18 @@ void* Door(void* actor) {
     const Kind k = Type(actor);
     if (k != Kind::Microwave && k != Kind::MiniOven && k != Kind::Cremator) return nullptr;
     if (k == Kind::Cremator) {
+        static CachedObjRef crematorDoorRef;
+        if (void* cached = crematorDoorRef.Get()) return cached;
         static CachedObjRef crematorDoorCls;
         if (!crematorDoorCls.Get()) crematorDoorCls.Set(object_index::ClassByName(L"prop_swinger_crematorDoor_C"));
         if (void* cls = crematorDoorCls.Get()) {
             const int32_t n = R::NumObjects();
             for (int32_t i = 0; i < n; ++i) {
                 void* obj = R::ObjectAt(i);
-                if (obj && R::ClassOf(obj) == cls && R::IsLive(obj) && !R::NameStartsWith(R::NameOf(obj), L"Default__"))
+                if (obj && R::ClassOf(obj) == cls && R::IsLive(obj) && !R::NameStartsWith(R::NameOf(obj), L"Default__")) {
+                    crematorDoorRef.Set(obj);
                     return obj;
+                }
             }
         }
     }
