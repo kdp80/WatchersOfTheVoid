@@ -448,8 +448,13 @@ sg::Verdict OnDoor(const sg::Call& c) {
 sg::Verdict OnMouse(const sg::Call& c) {
     if (!Client() || c.fromOurCode) return sg::Verdict::Run;
     void* parent=K::DoorParent(c.object);
-    if (!parent || !net_pump::IsInAnnouncedWorld(parent) ||
-        K::DoorUser(parent)!=players::Registry::Get().Local()) return sg::Verdict::Run;
+    if (!parent || !net_pump::IsInAnnouncedWorld(parent)) return sg::Verdict::Run;
+    void* user = K::DoorUser(parent);
+    if (user != players::Registry::Get().Local()) {
+        if (K::Type(parent) != K::Kind::Cremator ||
+            !ue_wrap::engine::IsMainPlayerGrabbing(players::Registry::Get().Local(), c.object))
+            return sg::Verdict::Run;
+    }
     static R::ParamOffset mouse{L"mouseXY"};
     const int off=mouse.Of(c.function);
     if (!c.locals || off<0) return sg::Verdict::Cancel;

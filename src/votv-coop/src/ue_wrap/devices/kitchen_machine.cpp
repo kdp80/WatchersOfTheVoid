@@ -129,12 +129,17 @@ void* Door(void* actor) {
     if (!comp) comp = Object(l.doorObj, actor);
     return comp ? Object(l.child, comp) : nullptr;
 }
+C++
 void* DoorParent(void* child) {
-    // Called from the global swing verb: do not dispatch another Blueprint here.
-    // Open/Close also occur on non-actor objects; never read Actor fields there.
     if (!child || !swinger::EnsureResolved() || !swinger::IsSwinger(child)) return nullptr;
     void* a = engine::ParentActorOf(child);
-    return a && Door(a)==child ? a : nullptr;
+    if (a && Door(a) == child) return a;
+    const auto& cremators = ue_wrap::cremator::Instances();
+    if (!cremators.empty() && Door(cremators[0]) == child) return cremators[0];
+    return nullptr;
+}
+bool OwnsDoor(void* actor) {
+    return Door(actor) != nullptr;
 }
 bool OwnsDoor(void* actor) {
     // Child actors can have locally minted keys. Only the parent's identity is shared.
@@ -189,14 +194,8 @@ bool ApplyDoorPose(void* actor,const FTransform& pose) {
 }
 void* DoorUser(void* actor) {
     void* child = Door(actor);
-    if (!child) return nullptr;
-    void* localPlayer = engine::GetFirstLocalPlayerController();
-    if (localPlayer) {
-        void* localPawn = engine::GetPlayerPawn(localPlayer);
-        if (localPawn && engine::IsMainPlayerGrabbing(localPawn, child)) return localPawn;
-    }
     static Field user{L"player"};
-    return Object(user, child);
+    return child ? Object(user, child) : nullptr;
 }
 bool MoveDoor(void* actor,void* player,const FVector2D& mouse) {
     void* child=Door(actor);
